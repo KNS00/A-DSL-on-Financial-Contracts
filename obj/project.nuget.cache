@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "kgudI2oBfm/6sVAs7tFA+0nHCOfTx15afPxUHTZ32ZowojRmdjz2FCLUQmzh+6roHX6bFPPhJYbnJ8ud8avEGQ==",
+  "success": true,
+  "projectFilePath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/code/BachelorThesis.fsproj",
+  "expectedPackageFiles": [
+    "/Users/kasperschiller/.nuget/packages/fsharp.core/7.0.0/fsharp.core.7.0.0.nupkg.sha512",
+    "/Users/kasperschiller/.nuget/packages/fsharp.stats/0.4.9/fsharp.stats.0.4.9.nupkg.sha512",
+    "/Users/kasperschiller/.nuget/packages/fsharpaux/1.1.0/fsharpaux.1.1.0.nupkg.sha512",
+    "/Users/kasperschiller/.nuget/packages/fsharpaux.io/1.1.0/fsharpaux.io.1.1.0.nupkg.sha512",
+    "/Users/kasperschiller/.nuget/packages/mathnet.numerics/5.0.0/mathnet.numerics.5.0.0.nupkg.sha512",
+    "/Users/kasperschiller/.nuget/packages/mathnet.numerics.fsharp/5.0.0/mathnet.numerics.fsharp.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
