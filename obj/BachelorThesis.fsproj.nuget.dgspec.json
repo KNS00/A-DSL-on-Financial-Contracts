@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/code/BachelorThesis.fsproj": {}
+    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj": {}
   },
   "projects": {
-    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/code/BachelorThesis.fsproj": {
+    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/code/BachelorThesis.fsproj",
+        "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj",
         "projectName": "BachelorThesis",
-        "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/code/BachelorThesis.fsproj",
+        "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj",
         "packagesPath": "/Users/kasperschiller/.nuget/packages/",
-        "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/code/obj/",
+        "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/kasperschiller/.nuget/NuGet/NuGet.Config"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "kgudI2oBfm/6sVAs7tFA+0nHCOfTx15afPxUHTZ32ZowojRmdjz2FCLUQmzh+6roHX6bFPPhJYbnJ8ud8avEGQ==",
+  "dgSpecHash": "gx1YgimDHAKeHQHsODQD5dGybMNb50ucGyRDxjbfFInVINyhvMKEaSd7lbCrmu41rlfOJ8Vw8N7Ro5KT+V3Fug==",
   "success": true,
-  "projectFilePath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/code/BachelorThesis.fsproj",
+  "projectFilePath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj",
   "expectedPackageFiles": [
     "/Users/kasperschiller/.nuget/packages/fsharp.core/7.0.0/fsharp.core.7.0.0.nupkg.sha512",
     "/Users/kasperschiller/.nuget/packages/fsharp.stats/0.4.9/fsharp.stats.0.4.9.nupkg.sha512",
