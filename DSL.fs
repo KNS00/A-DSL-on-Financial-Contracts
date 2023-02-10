@@ -3,6 +3,7 @@ open System
 // Firstly, I need to define a languague that describes what a contract is. 
 // It is basically an agreement between 2 parts to exchange something at a certain time. 
 // The DSL is currently mostly inspired by the research article "Composing Contracts: An Adventure in Finanical Engineering, by Simon Peyton Jones, Jean-Marc Eber and Julian Seward"
+// and Martin Elsmans FP for Trade Management presentation (2010, Simcorp)
 type Currency = USD | EUR | GDP | DKK | None
 
 type Obs = 
