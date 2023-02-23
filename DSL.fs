@@ -89,5 +89,3 @@ let forward: Contract =
   let nominal: float = 10.0
   let obs: Obs = Sub(Underlying(equity, expiryDate), Value(price))
   Scale(Value(nominal), Acquire(expiryDate, Scale(obs,One(DKK))))
-
-// Example n: Forward contract. Recieve S_T-K at time T; not before. Say, T = 22th of February 2000, S_T = 100DKK and K = 50DKK
