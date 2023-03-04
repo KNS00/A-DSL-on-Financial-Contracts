@@ -1,8 +1,26 @@
 module Analysis
 open FSharp.Stats
+open FSharp.Math
+open FSharp.Stats.Distributions
 
-// initialize a normal distribution with mean 25 and standard deviation 0.1
-let normalDistribution: Distributions.ContinuousDistribution<float,float> = Distributions.ContinuousDistribution.normal 25. 0.1
+let normalDistribution = ContinuousDistribution.normal 0.0 1.0
+// Wiener Process
+let wienerProcess (startTime : float) (endTime : float) (dt : float) : (float list * float list) = 
+    let mutable currentTime = startTime
+    let mutable results = [0.0] // Add zero as the initial value
+    let mutable t = [startTime] // Add the start time as the initial time
+    while currentTime <= endTime do
+        let sample = normalDistribution.Sample()
+        let value = sample * sqrt(dt)
+        results <- results @ [value + List.last results] // Add the last value to the new value
+        t <- t @ [currentTime]
+        currentTime <- currentTime + dt
+    (results, t)
 
-// draw independently 30 times from the given distribution 
-let sample: float[] = Array.init 30 (fun _ -> normalDistribution.Sample())
+// Geometric Brownian Motion
+let GBM (startTime : float) (endTime : float) (dt : float) (r : float) (sigma : float) : float list =
+    let (w, t) = wienerProcess startTime endTime dt 
+    List.mapi (fun i x -> x * exp((r - 0.5 * sigma**2.0) * t.[i] + sigma * x)) w
+// Asian Option Pricing 
+let Asianoption (S : float list) =
+    mean(S) 

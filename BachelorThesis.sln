@@ -5,6 +5,8 @@ VisualStudioVersion = 25.0.1704.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BachelorThesis", "BachelorThesis.fsproj", "{11D72650-E699-4D3C-9C07-3BDE0A0C0393}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CBE5E67D-1CCB-4A2E-903A-8DD07C3B60B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

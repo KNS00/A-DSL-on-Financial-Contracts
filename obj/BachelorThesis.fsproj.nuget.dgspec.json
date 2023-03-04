@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj": {}
+    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj": {}
   },
   "projects": {
-    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj": {
+    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj",
+        "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj",
         "projectName": "BachelorThesis",
-        "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj",
+        "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj",
         "packagesPath": "/Users/kasperschiller/.nuget/packages/",
-        "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/obj/",
+        "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/kasperschiller/.nuget/NuGet/NuGet.Config"
@@ -20,9 +20,7 @@
           "net7.0"
         ],
         "sources": {
-          "/.nuget/NuGet/Packages": {},
-          "/usr/local/share/dotnet/sdk/7.0.100/FSharp/library-packs": {},
-          "/usr/local/share/dotnet/sdk/7.0.100/FSharp/library-packs": {},
+          "/usr/local/share/dotnet/sdk/7.0.200/FSharp/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,17 +37,22 @@
             "FSharp.Core": {
               "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
               "target": "Package",
-              "version": "[7.0.0, )",
+              "version": "[7.0.200, )",
               "generatePathProperty": true
             },
             "FSharp.Stats": {
               "target": "Package",
-              "version": "[0.4.9, )",
+              "version": "[0.4.11, )",
               "generatePathProperty": true
             },
             "MathNet.Numerics.FSharp": {
               "target": "Package",
               "version": "[5.0.0, )",
+              "generatePathProperty": true
+            },
+            "XPlot.Plotly": {
+              "target": "Package",
+              "version": "[4.0.6, )",
               "generatePathProperty": true
             }
           },
@@ -69,7 +72,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.200/RuntimeIdentifierGraph.json"
         }
       }
     }

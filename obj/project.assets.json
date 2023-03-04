@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     "net7.0": {
-      "FSharp.Core/7.0.0": {
+      "FSharp.Core/7.0.200": {
         "type": "package",
         "compile": {
           "lib/netstandard2.1/FSharp.Core.dll": {
@@ -56,7 +56,7 @@
           }
         }
       },
-      "FSharp.Stats/0.4.9": {
+      "FSharp.Stats/0.4.11": {
         "type": "package",
         "dependencies": {
           "FSharp.Core": "6.0.1",
@@ -136,19 +136,49 @@
             "related": ".xml"
           }
         }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "XPlot.Plotly/4.0.6": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.7.2",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/XPlot.Plotly.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/XPlot.Plotly.dll": {
+            "related": ".xml"
+          }
+        }
       }
     }
   },
   "libraries": {
-    "FSharp.Core/7.0.0": {
-      "sha512": "xPww0dhsH7o373ZNFY1Y08WRsJJUUzqGk0AIUxxUxSJkWqul0UwCBXg6UmqJX76VdiSvvEXn4SYwX8lYQaZzuQ==",
+    "FSharp.Core/7.0.200": {
+      "sha512": "NmgUnpNH6Zu9B0SPIhojyo38gnPdkdYFYQfbd6zosEH32kbGY/g/Klk7PfOWe1NAe/O1YOMmK9KhwQ2OWsWEbg==",
       "type": "package",
-      "path": "fsharp.core/7.0.0",
+      "path": "fsharp.core/7.0.200",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
-        "fsharp.core.7.0.0.nupkg.sha512",
+        "fsharp.core.7.0.200.nupkg.sha512",
         "fsharp.core.nuspec",
         "lib/netstandard2.0/FSharp.Core.dll",
         "lib/netstandard2.0/FSharp.Core.xml",
@@ -182,14 +212,14 @@
         "lib/netstandard2.1/zh-Hant/FSharp.Core.resources.dll"
       ]
     },
-    "FSharp.Stats/0.4.9": {
-      "sha512": "46QZx8N4F/Evbvzk7A2TZv/91qXtKbcf68dtyoEK2CZrwBkwrgQeS/7oqgZphhgFxxYmff/v/fBlwyV2pFwl4Q==",
+    "FSharp.Stats/0.4.11": {
+      "sha512": "G7cmIRWPoDwen/IxVBfFq413JJwAdTbcRV5FS7imNFRqk0fBNaDeT9/+epeXMJ/0Rt5hPb7/w3FZXWQCq1uXcA==",
       "type": "package",
-      "path": "fsharp.stats/0.4.9",
+      "path": "fsharp.stats/0.4.11",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "fsharp.stats.0.4.9.nupkg.sha512",
+        "fsharp.stats.0.4.11.nupkg.sha512",
         "fsharp.stats.nuspec",
         "lib/netstandard2.0/FSharp.Stats.dll",
         "lib/netstandard2.0/FSharp.Stats.pdb",
@@ -280,13 +310,59 @@
         "mathnet.numerics.fsharp.5.0.0.nupkg.sha512",
         "mathnet.numerics.fsharp.nuspec"
       ]
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "sha512": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "type": "package",
+      "path": "newtonsoft.json/12.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.12.0.3.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "packageIcon.png"
+      ]
+    },
+    "XPlot.Plotly/4.0.6": {
+      "sha512": "5qLab8jB4ZxmRl2z+Me47k5fsMOW0vPiAXpuoYashGUmolP3+xDg1SWsvodsbr+Q6ipcJhp97Cyq8qDzCHFEDA==",
+      "type": "package",
+      "path": "xplot.plotly/4.0.6",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/XPlot.Plotly.dll",
+        "lib/netstandard2.0/XPlot.Plotly.xml",
+        "logo.png",
+        "xplot.plotly.4.0.6.nupkg.sha512",
+        "xplot.plotly.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "FSharp.Core >= 7.0.0",
-      "FSharp.Stats >= 0.4.9",
-      "MathNet.Numerics.FSharp >= 5.0.0"
+      "FSharp.Core >= 7.0.200",
+      "FSharp.Stats >= 0.4.11",
+      "MathNet.Numerics.FSharp >= 5.0.0",
+      "XPlot.Plotly >= 4.0.6"
     ]
   },
   "packageFolders": {
@@ -295,11 +371,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj",
+      "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj",
       "projectName": "BachelorThesis",
-      "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/BachelorThesis.fsproj",
+      "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj",
       "packagesPath": "/Users/kasperschiller/.nuget/packages/",
-      "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/obj/",
+      "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/kasperschiller/.nuget/NuGet/NuGet.Config"
@@ -308,9 +384,7 @@
         "net7.0"
       ],
       "sources": {
-        "/.nuget/NuGet/Packages": {},
-        "/usr/local/share/dotnet/sdk/7.0.100/FSharp/library-packs": {},
-        "/usr/local/share/dotnet/sdk/7.0.100/FSharp/library-packs": {},
+        "/usr/local/share/dotnet/sdk/7.0.200/FSharp/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -327,17 +401,22 @@
           "FSharp.Core": {
             "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
             "target": "Package",
-            "version": "[7.0.0, )",
+            "version": "[7.0.200, )",
             "generatePathProperty": true
           },
           "FSharp.Stats": {
             "target": "Package",
-            "version": "[0.4.9, )",
+            "version": "[0.4.11, )",
             "generatePathProperty": true
           },
           "MathNet.Numerics.FSharp": {
             "target": "Package",
             "version": "[5.0.0, )",
+            "generatePathProperty": true
+          },
+          "XPlot.Plotly": {
+            "target": "Package",
+            "version": "[4.0.6, )",
             "generatePathProperty": true
           }
         },
@@ -357,7 +436,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.100/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.200/RuntimeIdentifierGraph.json"
       }
     }
   }

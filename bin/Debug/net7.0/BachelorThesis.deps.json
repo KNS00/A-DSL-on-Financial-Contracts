@@ -8,19 +8,20 @@
     ".NETCoreApp,Version=v7.0": {
       "BachelorThesis/1.0.0": {
         "dependencies": {
-          "FSharp.Core": "7.0.0",
-          "FSharp.Stats": "0.4.9",
-          "MathNet.Numerics.FSharp": "5.0.0"
+          "FSharp.Core": "7.0.200",
+          "FSharp.Stats": "0.4.11",
+          "MathNet.Numerics.FSharp": "5.0.0",
+          "XPlot.Plotly": "4.0.6"
         },
         "runtime": {
           "BachelorThesis.dll": {}
         }
       },
-      "FSharp.Core/7.0.0": {
+      "FSharp.Core/7.0.200": {
         "runtime": {
           "lib/netstandard2.1/FSharp.Core.dll": {
             "assemblyVersion": "7.0.0.0",
-            "fileVersion": "7.0.22.51310"
+            "fileVersion": "7.2.23.6902"
           }
         },
         "resources": {
@@ -65,22 +66,22 @@
           }
         }
       },
-      "FSharp.Stats/0.4.9": {
+      "FSharp.Stats/0.4.11": {
         "dependencies": {
-          "FSharp.Core": "7.0.0",
+          "FSharp.Core": "7.0.200",
           "FSharpAux": "1.1.0",
           "FSharpAux.IO": "1.1.0"
         },
         "runtime": {
           "lib/netstandard2.0/FSharp.Stats.dll": {
-            "assemblyVersion": "0.4.9.0",
-            "fileVersion": "0.4.9.0"
+            "assemblyVersion": "0.4.11.0",
+            "fileVersion": "0.4.11.0"
           }
         }
       },
       "FSharpAux/1.1.0": {
         "dependencies": {
-          "FSharp.Core": "7.0.0"
+          "FSharp.Core": "7.0.200"
         },
         "runtime": {
           "lib/net5.0/FSharpAux.dll": {
@@ -91,7 +92,7 @@
       },
       "FSharpAux.IO/1.1.0": {
         "dependencies": {
-          "FSharp.Core": "7.0.0",
+          "FSharp.Core": "7.0.200",
           "FSharpAux": "1.1.0"
         },
         "runtime": {
@@ -111,13 +112,33 @@
       },
       "MathNet.Numerics.FSharp/5.0.0": {
         "dependencies": {
-          "FSharp.Core": "7.0.0",
+          "FSharp.Core": "7.0.200",
           "MathNet.Numerics": "5.0.0"
         },
         "runtime": {
           "lib/net6.0/MathNet.Numerics.FSharp.dll": {
             "assemblyVersion": "5.0.0.0",
             "fileVersion": "5.0.0.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
+          }
+        }
+      },
+      "XPlot.Plotly/4.0.6": {
+        "dependencies": {
+          "FSharp.Core": "7.0.200",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/XPlot.Plotly.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "4.0.5.0"
           }
         }
       }
@@ -129,19 +150,19 @@
       "serviceable": false,
       "sha512": ""
     },
-    "FSharp.Core/7.0.0": {
+    "FSharp.Core/7.0.200": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xPww0dhsH7o373ZNFY1Y08WRsJJUUzqGk0AIUxxUxSJkWqul0UwCBXg6UmqJX76VdiSvvEXn4SYwX8lYQaZzuQ==",
-      "path": "fsharp.core/7.0.0",
-      "hashPath": "fsharp.core.7.0.0.nupkg.sha512"
+      "sha512": "sha512-NmgUnpNH6Zu9B0SPIhojyo38gnPdkdYFYQfbd6zosEH32kbGY/g/Klk7PfOWe1NAe/O1YOMmK9KhwQ2OWsWEbg==",
+      "path": "fsharp.core/7.0.200",
+      "hashPath": "fsharp.core.7.0.200.nupkg.sha512"
     },
-    "FSharp.Stats/0.4.9": {
+    "FSharp.Stats/0.4.11": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-46QZx8N4F/Evbvzk7A2TZv/91qXtKbcf68dtyoEK2CZrwBkwrgQeS/7oqgZphhgFxxYmff/v/fBlwyV2pFwl4Q==",
-      "path": "fsharp.stats/0.4.9",
-      "hashPath": "fsharp.stats.0.4.9.nupkg.sha512"
+      "sha512": "sha512-G7cmIRWPoDwen/IxVBfFq413JJwAdTbcRV5FS7imNFRqk0fBNaDeT9/+epeXMJ/0Rt5hPb7/w3FZXWQCq1uXcA==",
+      "path": "fsharp.stats/0.4.11",
+      "hashPath": "fsharp.stats.0.4.11.nupkg.sha512"
     },
     "FSharpAux/1.1.0": {
       "type": "package",
@@ -170,6 +191,20 @@
       "sha512": "sha512-lKYhd68fReW5odX/q+Uzxw3357Duq3zmvkYvnZVqqcc2r/EmrYGDoOdUGuHnhfr8yj9V34js5gQH/7IWcxZJxg==",
       "path": "mathnet.numerics.fsharp/5.0.0",
       "hashPath": "mathnet.numerics.fsharp.5.0.0.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+    },
+    "XPlot.Plotly/4.0.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5qLab8jB4ZxmRl2z+Me47k5fsMOW0vPiAXpuoYashGUmolP3+xDg1SWsvodsbr+Q6ipcJhp97Cyq8qDzCHFEDA==",
+      "path": "xplot.plotly/4.0.6",
+      "hashPath": "xplot.plotly.4.0.6.nupkg.sha512"
     }
   }
 }

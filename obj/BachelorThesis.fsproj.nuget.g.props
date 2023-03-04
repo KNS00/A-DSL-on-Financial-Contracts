@@ -13,8 +13,9 @@
     <SourceRoot Include="/Users/kasperschiller/.nuget/packages/" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">/Users/kasperschiller/.nuget/packages/fsharp.core/7.0.0</PkgFSharp_Core>
+    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">/Users/kasperschiller/.nuget/packages/fsharp.core/7.0.200</PkgFSharp_Core>
+    <PkgXPlot_Plotly Condition=" '$(PkgXPlot_Plotly)' == '' ">/Users/kasperschiller/.nuget/packages/xplot.plotly/4.0.6</PkgXPlot_Plotly>
     <PkgMathNet_Numerics_FSharp Condition=" '$(PkgMathNet_Numerics_FSharp)' == '' ">/Users/kasperschiller/.nuget/packages/mathnet.numerics.fsharp/5.0.0</PkgMathNet_Numerics_FSharp>
-    <PkgFSharp_Stats Condition=" '$(PkgFSharp_Stats)' == '' ">/Users/kasperschiller/.nuget/packages/fsharp.stats/0.4.9</PkgFSharp_Stats>
+    <PkgFSharp_Stats Condition=" '$(PkgFSharp_Stats)' == '' ">/Users/kasperschiller/.nuget/packages/fsharp.stats/0.4.11</PkgFSharp_Stats>
   </PropertyGroup>
 </Project>

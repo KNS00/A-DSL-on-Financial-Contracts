@@ -1,5 +1,6 @@
 module DSL
 open System
+open Analysis
 // Firstly, I need to define a languague that describes what a contract is. 
 // It is basically an agreement between 2 parts to exchange something at a certain time. 
 // The DSL is currently mostly inspired by the research article "Composing Contracts: An Adventure in Finanical Engineering, by Simon Peyton Jones, Jean-Marc Eber and Julian Seward"
@@ -10,7 +11,6 @@ type Obs =
   | Value of double // how many
   | Underlying of string * DateTime
   | Strike of double
-  | AveragePrice of double // used for Asian Contracts
   | Mul of Obs * Obs
   | Add of Obs * Obs
   | Sub of Obs * Obs
@@ -30,17 +30,16 @@ type Contract =
   | Anytime of Contract // used for American options
   | Then of Contract * Contract // Then(c1, c2) means you acquire c1 if it has not expired; else c2.
 
-
 // Example 0: A contract cointaining nothing. That is: A value of 0 with no currency.
 let c0: Contract =  Scale(Value(0.0), One((None)))
 let c0_: Contract = All [] 
 let flow(d: string, v: double, c: Currency) : Contract = Acquire(System.DateTime.Parse d,Scale(Value(v), One(c)))  
-(* Acquire a bond that pays 100 USD on the 1st of December 2023. *)
+// Acquire a bond that pays 100 USD on the 1st of December 2023. 
 let zcb1: Contract = 
   let maturityDate: string = "2000-1-12"
   flow(maturityDate, 100.0, USD)
 
-(* Example: Acquire a bond that pays 100 USD on the 1st of December 2023 and pays dividends of 10 USD on the 1st of every quarter. *)
+// Example: Acquire a bond that pays 100 USD on the 1st of December 2023 and pays dividends of 10 USD on the 1st of every quarter. 
 let dividendPayingBond: Contract = 
   let maturityDate: string = "2000/12/1"
   let pct: float = 0.02

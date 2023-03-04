@@ -1,0 +1,28 @@
+﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{11D72650-E699-4D3C-9C07-3BDE0A0C0393}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Program.fs">
+    <Files>
+      <File FileName="Program.fs" Line="28" Column="5" IsPinned="True" />
+      <File FileName="DSL.fs" Line="13" Column="1" />
+      <File FileName="BachelorThesis.fsproj" Line="1" Column="1" />
+      <File FileName="Analysis.fs" Line="6" Column="1" NotebookId="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="BachelorThesis" expanded="True" selected="True">
+            <Node name="BachelorThesis" expanded="True">
+              <Node name="Dependencies" expanded="True">
+                <Node name="PackageDependencies" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.BachelorThesis PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

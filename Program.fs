@@ -1,69 +1,32 @@
 ﻿module Program
 open DSL
 open Analysis
+open Tests
+open XPlot.Plotly
 
+let startTime = 0.0
+let endTime = 10.0
+let dt = 0.01
+let sigma = 0.1
+let rs = [0.8; 1.0; 1.2; 1.4; 1.6; 1.8]
 
-(*
-// Define a function to calculate the value of a contract
-let value (c: Contract) : int =
-    match c with
-    | One (curr) ->
-        match curr with
-        | USD -> 1
-        | EUR -> 2
-        | GBP -> 3
-    | Underlying intVal -> intVal
-    | Fixing_date _ -> 0
-    | Maturity_date _ -> 0
-    | Currency _ -> 0
-*)
+let data = 
+    rs
+    |> List.map (fun r ->
+        let gbm = GBM startTime endTime dt r sigma
+        Scatter(
+            x = seq { startTime .. dt .. endTime }, 
+            y = gbm, 
+            mode = "lines", 
+            name = sprintf "GBM (r = %.1f)" r
+        )
+    )
 
+let layout = Layout(title = "Geometric Brownian Motion")
+Chart.Plot(data)
+|> Chart.Show 
 
+let main args =
+    0
 
-
-
-(*
-type contract(underlying : string, fixing_date : DateTime, maturity_date : DateTime, currency : string ) = 
-  member val underlying : string = underlying
-  member val fixing_date = fixing_date
-  member val maturity_date = maturity_date
-  member val currency = currency
-  
-  member this.getUnderlying() = this.underlying
-  member this.getFixingDate() = this.fixing_date
-  member this.getMaturityDate() = this.maturity_date
-  member this.getCurrency() = this.currency
-
-  type europeanCall (underlying : string, fixing_date : DateTime, maturity_date : DateTime, currency : string, strike : double, automatic : bool) = 
-    inherit contract(underlying, fixing_date, maturity_date, currency)
-    member val strike = strike 
-    member val automatic = automatic
-
-    member this.getStrike() = this.strike
-    member this.getAutomatic() = this.automatic
-
-  type europeanPut (underlying : string, fixing_date : DateTime, maturity_date : DateTime, currency : string, strike : double, automatic : bool) = 
-      inherit contract(underlying, fixing_date, maturity_date, currency)
-      member val strike = strike
-      member val automatic = automatic
-
-      member this.getStrike() = this.strike
-      member this.getAutomatic() = this.automatic
-
-
-
-
-let createEuropeanPutExample (underlying : string, fixing_date : DateTime, maturity_date : DateTime, currency : string, strike : double, automatic : bool) =
-  let put = europeanPut(underlying, fixing_date, maturity_date, currency, strike, automatic)
-  put
-
-let putExample = createEuropeanPutExample(
-  "Caféen A/S",
-  new DateTime(2022, 12, 10),
-  new DateTime(2023, 12, 10),
-  "DKK",
-  100.0,
-  true
-)
-printfn "Strike: %f %s " (putExample.getStrike()) (putExample.getCurrency())  
-*)
+printer |> ignore
