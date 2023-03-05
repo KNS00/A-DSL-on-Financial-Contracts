@@ -30,6 +30,11 @@ type Contract =
   | Anytime of Contract // used for American options
   | Then of Contract * Contract // Then(c1, c2) means you acquire c1 if it has not expired; else c2.
 
+
+type StochasticProcess =
+    | WienerProcess of startTime: float * endTime: float * dt: float * r: float * sigma: float
+    | GeometricBrownianMotion of startTime: float * endTime: float * dt: float * r: float * sigma: float
+
 // Example 0: A contract cointaining nothing. That is: A value of 0 with no currency.
 let c0: Contract =  Scale(Value(0.0), One((None)))
 let c0_: Contract = All [] 

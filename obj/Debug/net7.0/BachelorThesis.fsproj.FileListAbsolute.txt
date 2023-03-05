@@ -72,6 +72,10 @@
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/obj/Debug/net7.0/BachelorThesis.pdb
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/obj/Debug/net7.0/BachelorThesis.genruntimeconfig.cache
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/-Management-of-Financial-Contracts-A-Study-on-the-Potential-of-a-Domain-Specific-Language/obj/Debug/net7.0/ref/BachelorThesis.dll
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.fsproj.AssemblyReference.cache
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.AssemblyInfoInputs.cache
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.AssemblyInfo.fs
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.fsproj.CoreCompileInputs.cache
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/bin/Debug/net7.0/BachelorThesis
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/bin/Debug/net7.0/BachelorThesis.deps.json
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/bin/Debug/net7.0/BachelorThesis.runtimeconfig.json
@@ -98,10 +102,6 @@
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/bin/Debug/net7.0/tr/FSharp.Core.resources.dll
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/bin/Debug/net7.0/zh-Hans/FSharp.Core.resources.dll
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/bin/Debug/net7.0/zh-Hant/FSharp.Core.resources.dll
-/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.fsproj.AssemblyReference.cache
-/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.AssemblyInfoInputs.cache
-/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.AssemblyInfo.fs
-/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.fsproj.CoreCompileInputs.cache
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.fsproj.CopyComplete
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/BachelorThesis.dll
 /Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/Debug/net7.0/refint/BachelorThesis.dll
