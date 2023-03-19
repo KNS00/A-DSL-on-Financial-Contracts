@@ -1,19 +1,18 @@
-﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{11D72650-E699-4D3C-9C07-3BDE0A0C0393}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Program.fs">
+﻿<Properties StartupConfiguration="{11D72650-E699-4D3C-9C07-3BDE0A0C0393}|Default" GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.Workbench ActiveDocument="DSL.fs">
     <Files>
-      <File FileName="Program.fs" Line="14" Column="7" IsPinned="True" />
-      <File FileName="DSL.fs" Line="22" Column="20" IsPinned="True" />
-      <File FileName="Class.fs" Line="17" Column="19" />
-      <File FileName="Analysis.fs" Line="23" Column="81" />
+      <File FileName="Program.fs" Line="9" Column="18" IsPinned="True" />
+      <File FileName="DSL.fs" Line="27" Column="1" IsPinned="True" />
+      <File FileName="Tests.fs" Line="9" Column="34" />
+      <File FileName="Analysis.fs" Line="38" Column="1" NotebookId="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="BachelorThesis" expanded="True" selected="True">
-            <Node name="Solution Items" expanded="True" />
-            <Node name="BachelorThesis" expanded="True">
+          <Node name="BachelorThesis" expanded="True">
+            <Node name="BachelorThesis" expanded="True" selected="True">
               <Node name="Dependencies" expanded="True">
-                <Node name="PackageDependencies" expanded="True" />
+                <Node name="FrameworkReferences" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -21,13 +20,11 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.BachelorThesis PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/Analysis.fs" relfile="Analysis.fs" line="11" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.BachelorThesis PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>

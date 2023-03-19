@@ -4,8 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Analysis.fs" />
     <Compile Include="DSL.fs" />
+    <Compile Include="Analysis.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
     <PackageReference Include="FSharp.Stats" Version="0.4.11" />
