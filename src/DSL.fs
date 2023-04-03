@@ -9,7 +9,6 @@ type Currency = USD | EUR | GDP | DKK | None
 type Obs = 
   | Value of double // how many
   | Underlying of string * int // get stock price at specific time relative to today
-  | Strike of double // not sure if this should be an obs
   | Mul of Obs * Obs
   | Add of Obs * Obs
   | Sub of Obs * Obs
