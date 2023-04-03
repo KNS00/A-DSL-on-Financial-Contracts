@@ -81,34 +81,43 @@ let rec evalc (I:int->float) (E:(string*int)->float) (c: Contract) : float =
   | Then(c1, c2) -> if getMaturityDate(c1) > 0 then evalc I E c1 else evalc I E c2
 
 // find stock price, needs fix
-let rec E(name: string, t: int) : float =
-    100.0
-    (*match t with
+let rec E(name: string, t: int) : float =  
+    match t with
     | t when t >= 1 -> 
-        let current_price = E(name, 0)
+        (*let current_price = E(name, 0)
         let mu = 0.1
         let sigma = 1.0 
         List.init 1000000 (fun _ -> GBM(current_price, mu, sigma, t))
         |> List.average
-    | t when t <= 0 -> 100 // get price from api, csv or alike
-    *)
+        100.0 *)
+        E(name, 0) * exp((0.0 - 0.2**2.0 / 2.0) * float t) // lets look up the parameters maybe?? how should this be implemented
+    | t when t <= 0 -> 100.0 // get price from api, csv or alike
 
 
+let simStocks (c : Contract) (stocks : (string * float * float * float) list) : (string * (int * float) list) list = // stocks is name * mu * sigma. This function lets you simulate prices for mulitple stocks
+    let simulate (currentPrice: float) (days : int) (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = // returns days * prices. 
+        let dates : int list = [0 .. 1 .. days]
+        let GBM : float list = GeometricBrownianMotion(currentPrice, 0, days, 1, mu, sigma, wpValues)
+        List.map2 (fun d p -> (d, p)) dates GBM
+
+    let wpValues = WienerProcess(0, (getMaturityDate c), 1)
+    // 1 because we are assuming day time increments
+    let sim : (string * (int * float) list) list = // simulate stock prices
+        List.map (fun (s, S0, mu, sigma) -> (s,simulate S0 (getMaturityDate c) mu sigma wpValues)) stocks  
+    sim
 
 
-let simulate (currentPrice: float) (days : int) (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = // returns days * prices. 
-    let dates : int list = [0 .. 1 .. days]
-    let GBM : float list = GeometricBrownianMotion(currentPrice, 0, days, 1, mu, sigma, wpValues)
-    List.map2 (fun d p -> (d, p)) dates GBM
+let mc1(c : Contract) (stocks : (string * float * float * float) list) : float =  
+    let data = simStocks c stocks 
+    let E(s,n) : float = 
+        let stockdata = List.find(fun (s',_) -> s = s') data |> snd
+        let quote = List.find(fun(n',_) -> n = n' ) stockdata |> snd
+        quote
+    evalc I E c
 
-
-// right now the mc function just calculates the values of the underlying. But E[F(S_T)] != E[F(S_T)], where F is a option function. hmm
-let mc (c : Contract) (sim : int) (stocks : (string * float * float) list) : float list = // stocks is name * mu * sigma. This function lets you simulate more prices at once
-    let wpValues = WienerProcess(0, (getMaturityDate c), 1) // 1 because we are assumping day time increments
-    let currentPrices : float list = stocks |> List.map (fun (name, _, _) -> E (name, 0)) // get current price for each stock
-    let sim : (string * (int * float) list) list = 
-        List.map (fun (s, mu, sigma) -> (s,simulate currentPrices[0] (getMaturityDate c) mu sigma wpValues)) stocks  // We simulate the stocks price for all prices up to the expiry date
-    let prices : (float list) list =
-        sim |> List.map (fun (_, prices) -> List.map snd prices)
-    prices |> List.map List.average // OOPS, there has been a misunderstanding... We are taking the average of all the stock prices over a period ?? cant use this for anything
-    
+// simulate stock prices sims amount of times and take the average (MC simulation)
+let mc (c : Contract) (sims : int) (stocks : (string * float * float * float) list) : float =  
+    let rec loop (i: int) (acc : float) : float =  // using recursion because otherwise we have to change seed everytime
+        if i = sims then acc
+        else loop (i + 1) (mc1 c stocks + acc)
+    loop 0 (float sims) / float sims
