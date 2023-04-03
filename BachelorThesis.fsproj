@@ -4,10 +4,10 @@
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DSL.fs" />
-    <Compile Include="Analysis.fs" />
-    <Compile Include="Tests.fs" />
-    <Compile Include="Program.fs" />
+    <Compile Include="src/DSL.fs" />
+    <Compile Include="src/Analysis.fs" />
+    <Compile Include="tests/Tests.fs" />
+    <Compile Include="src/Program.fs" />
     <PackageReference Include="FSharp.Stats" Version="0.4.11" />
     <PackageReference Include="MathNet.Numerics.FSharp" Version="5.0.0" />
     <PackageReference Include="XPlot.Plotly" Version="4.0.6" />
