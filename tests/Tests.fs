@@ -1,12 +1,35 @@
 module Tests
+open Domain
+open Evaluations
+open Simulations
 open Analysis
-open DSL
-let flow(i: int, v: double, c: Currency) : Contract = Acquire(i,Scale(Value(v), One(c)))  
-let contract1 = One DKK // A contract containing the valuta DKK
-let contract2 = Scale(Value(100.0), One(EUR)) // A contract containing 100 EUR
-let contract3 = flow(5, 10.0, DKK) // A contract containing the acquisition of 10 DKK, 5 days from now.
-let contract4 = flow(365, 100.0, EUR) // A contract containing the acquisition of 100 EUR 365 days from now.
-let contract5 = All([contract1; contract2; contract3; contract4])
+let flow(i: int, v: double, c: Currency) : Contract
+    = Acquire(i,Scale(Value v, One c))
+
+let zcb1: Contract = 
+  let maturityDate : int = 10
+  flow(maturityDate, 100.0, USD)
+
+
+let dividendPayingBond : Contract = 
+  let maturityDate = 120
+  let pct = 0.02
+  let qPct : float = exp(pct * 1.0/4.0)
+  let investment = 100.0
+  let quarterlyPayments: Contract = 
+    let payment = qPct * investment
+    All([
+        flow(30, payment, USD);
+        flow(60, payment, USD);    
+        flow(90, payment, USD);    
+        flow(120, payment, USD)])
+  Then(quarterlyPayments, flow(maturityDate, investment, USD))
+
+
+
+// A contract containing the acquisition of 10 DKK, 5 days from now.
+//let contract4 = flow(365, 100.0, EUR) // A contract containing the acquisition of 100 EUR 365 days from now.
+//let contract5 = All([contract1; contract2; contract3; contract4])
 
 // Call option
 let equity = "DIKU A/S"
@@ -21,40 +44,53 @@ let obs =
 let call_option : Contract = 
     Scale(
         Value nominal, 
-        Acquire(maturity, Scale(obs, One EUR))) // 1.0 * Acquire(5, 115 EUR)
+        Acquire(maturity, Scale(obs, One USD))) // 1.0 * Acquire(5, 115 EUR)
 
-let TestStockPrice = E(equity, maturity)
-let result1 = evalc I E contract1
-let result2 = evalc I E contract2
-let result3 = evalc I E contract3
-let result4 = evalc I E contract4
-let result5 = evalc I E contract5
-let result6 = evalc I E call_option
-let printer : float = 
-    printfn "%s %f" "Test E function:" TestStockPrice 
-    printfn "%s %A" "Test Evaluation of contract1:" result1 // 1.0,     correct
-    printfn "%s %A" "Test Evaluation of contract2:" result2 // 100.0,   correct
-    printfn "%s %A" "Test Evaluation of contract3:" result3 // 9.99,   correct
-    printfn "%s %A" "Test Evaluation of contract4:" result4 // 98.02,  correct
-    printfn "%s %A" "Test Evaluation of contract5:" result5 // 209.02,   correct
-    printfn "%s %A" "Test Evaluation of call option:" result6 // Should be around 115 beacuse E[S_T] = 165 and 165 - 50 = 115. However, this will//not work for exotic options! Because E[F(S_T)] != F(E[S_T]) for non-linear functions!
-    0.0
-let call1_obs : Obs = 
-    Max(Value 0.0, 
-        Sub(
-            Underlying(equity, maturity),
-            Value(strike))) // max(0, E[S_T] - E[Strike]. 
 
-let c1 : Contract = 
-    Scale(
-        Value nominal, 
-        Acquire(maturity, Scale(call1_obs, One EUR))) // 1.0 * Acquire(5, 115 EUR)
+let exampleEuropeanCallOption : Contract =
+    let underlying = "DIKU A/S"
+    let strike = 100.0
+    let maturity = 30
+    let currency = USD
+    let payoff = 
+        Max(Value 0.0, Sub(Underlying(underlying, maturity), Value strike))
+    Scale(payoff, One currency)
 
-let sim = 100_000
-let stocks : (string * float * float * float) list = 
-    [("DIKU A/S", 150.0, 0.0, 0.2); 
-     ("HCØ A/S", 100.0, 0.0, 0.4); 
-     ("Carlsberg A/S", 100.0, 0.0, 0.6);
-     ("Coloplast A/S", 100.0, 0.0, 0.8);
-     ("Imerco A/S", 150.0, 0.0, 1.0)]
-let price = mc c1 sim stocks
+let exampleEuropeanPutOption : Contract =
+    let underlying = "DIKU A/S"
+    let strike = 100.0
+    let maturity = 30
+    let currency = USD
+    let payoff = 
+        Max(Value 0.0, Sub(Value strike, Underlying(underlying, maturity)))
+    Scale(payoff, One currency)
+
+let exampleForward : Contract =
+    let underlying = "DIKU A/S"
+    let strike = 100.0
+    let maturity = 30
+    let currency = USD
+    let discountedStrike = strike * I maturity
+    let payoff = Sub(Underlying(underlying, maturity), Value discountedStrike)
+    Scale(payoff, One currency)
+
+
+let exampleCurrencySwap : Contract =
+    let notional1 = 1000000.0
+    let currency1 = USD
+    let notional2 = 900000.0
+    let currency2 = EUR
+    let maturity = 30
+
+    let leg1 = Scale(Value notional1, One currency1)
+    let leg2 = Scale(Value notional2, One currency2)
+    Then(leg1, Acquire(maturity, leg2))
+
+let exampleFixedRateBond : Contract =
+    let principal = 1000.0
+    let rate = 0.05
+    let maturity = 30
+    let currency = USD
+    let coupon = Scale(Value (principal * rate), One currency)
+    let principalAtMaturity = Scale(Value principal, One currency)
+    All [coupon; Acquire(maturity, principalAtMaturity)]

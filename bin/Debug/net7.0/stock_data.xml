@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stock>
+  <Name>AAPL</Name>
+  <Price>135</Price>
+  <Drift>0.05</Drift>
+  <Volatility>0.2</Volatility>
+  <Prices>
+    <Price index="0">130.0</Price>
+    <Price index="1">129.6</Price>
+    <Price index="2">131.8</Price>
+    <Price index="3">132.2</Price>
+    <Price index="4">133.4</Price>
+    <Price index="5">130.9</Price>
+    <Price index="6">131.5</Price>
+    <Price index="7">132.1</Price>
+    <Price index="8">131.7</Price>
+    <Price index="9">133.2</Price>
+    <Price index="10">133.5</Price>
+    <Price index="11">135</Price>
+  </Prices>
+</stock>

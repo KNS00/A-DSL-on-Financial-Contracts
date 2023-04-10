@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj": {}
+    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/BachelorThesis.fsproj": {}
   },
   "projects": {
-    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj": {
+    "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/BachelorThesis.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj",
+        "projectUniqueName": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/BachelorThesis.fsproj",
         "projectName": "BachelorThesis",
-        "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/BachelorThesis.fsproj",
+        "projectPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/BachelorThesis.fsproj",
         "packagesPath": "/Users/kasperschiller/.nuget/packages/",
-        "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/BachelorThesis/obj/",
+        "outputPath": "/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/kasperschiller/.nuget/NuGet/NuGet.Config"
@@ -20,7 +20,7 @@
           "net7.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/sdk/7.0.200/FSharp/library-packs": {},
+          "/usr/local/share/dotnet/sdk/7.0.202/FSharp/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -40,6 +40,11 @@
               "version": "[7.0.200, )",
               "generatePathProperty": true
             },
+            "FSharp.Data": {
+              "target": "Package",
+              "version": "[5.0.2, )",
+              "generatePathProperty": true
+            },
             "FSharp.Stats": {
               "target": "Package",
               "version": "[0.4.11, )",
@@ -49,6 +54,10 @@
               "target": "Package",
               "version": "[5.0.0, )",
               "generatePathProperty": true
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "XPlot.Plotly": {
               "target": "Package",
@@ -72,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.200/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,123 +1,77 @@
 module Analysis
-open DSL
-open FSharp.Stats
-open FSharp.Math
-open FSharp.Stats.Distributions
+open Domain
+open Evaluations
+open Simulations
+//open exchangeRates
 
-// Wiener Process
-let WienerProcess(startTime : int, endTime : int, dt : int) : float list = 
-    let normalDistribution = ContinuousDistribution.normal 0 1
-    let numSteps = endTime - startTime //int ((endTime - startTime) / dt)
-    let sampleValues = List.init numSteps (fun _ -> normalDistribution.Sample() * sqrt(float(dt)))
-    let results = List.scan (+) 0.0 sampleValues
-    results 
+/// <summary>
+/// Runs a Monte Carlo simulation to estimate the price of a portfolio of stocks at a given time. Also updates the XML file with these prices.
+/// </summary>
+/// <param name="stockList">A list of stocks to simulate.</param>
+/// <returns>A (string * int * float) list, with the name, time and price of the underlying.</returns>
+let simulateStocks (stockList : Obs list) : (string * int * float) list =
+    let stocksInfo: (string * int) list =
+        stockList
+        |> List.collect (fun o ->
+            let stocks = get_stocks_from_obs o
+            let maturityDate = getObsMaturityDate o
+            List.zip stocks (List.replicate (List.length stocks) maturityDate))
+        |> List.distinct
+        |> List.sort
 
-// Geometric Brownian Motion
-let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : int, mu: float, sigma: float, wpValues : float list) : float list =
-    //let wpValues : float list = WienerProcess (startTime, endTime, dt)
-    let t = [startTime .. dt .. endTime]
-    let numSteps = 1 //int ((endTime - startTime) / dt)
-    let sampleValues = 
-        List.zip wpValues t |> List.map (fun (w,t) -> 
-        let drift = (mu - 0.5 * sigma**2) * float(t)
-        let diffusion = sigma * w
-        currentPrice * exp(drift + diffusion)
-        )   
-    sampleValues
+    let dt = 1.0
+    let sims = 100_000
 
-// Get interest rate (constant for now, fix later)
-let I (i : int) : float = // assume 0.02
-    exp(0.02 * float(i)/365.0) //
+    let simulate (stock: string, t: int) : (string * int * float) =
+        let rec loop (i: int) (acc : float) : float =
+            if i = sims then acc
+            else 
+                let simulationResult = mc1 [stock] t dt
+                let updatedAcc = acc + List.head simulationResult
+                loop (i + 1) updatedAcc
+        let totalSimulatedPrice = loop 0 0.0
+        let averageSimulatedPrice = totalSimulatedPrice / float sims
+        (stock, t, averageSimulatedPrice)
 
-// Get maturity date of contract
-let rec getMaturityDate (c : Contract) : int =
-    match c with
-    | One _ -> 0
-    | Scale (obs, c1) -> getMaturityDate c1
-    | All [] -> 0
-    | All (c1::cs) -> max (getMaturityDate c1) (getMaturityDate (All cs))
-    | Acquire (i, c1) -> i
-    | Or (c1, c2) -> max (getMaturityDate c1) (getMaturityDate c2)
-    | Give c1 -> getMaturityDate c1
-    | Anytime c1 -> getMaturityDate c1
-    | Then (c1, c2) -> max (getMaturityDate c1) (getMaturityDate c2)
+    let averagePrices = List.map simulate stocksInfo
+    List.iter (fun (stockName, t, avgPrice) -> XMLFunctions.updateStockData stockName t avgPrice) averagePrices
+    averagePrices
 
 
-// function to evaluate observables
-let rec evalo (E:(string*int)->float) (o : Obs) : float = 
-  match o with
-  | Value n -> n
-  | Underlying (s, t) -> E(s,t)
-  | Mul (c1, c2) ->
-      let n1 = evalo E c1
-      let n2 = evalo E c2
-      n1 * n2
-  | Add (c1, c2) ->
-      let n1 = evalo E c1
-      let n2 = evalo E c2
-      n1 + n2
-  | Sub (c1, c2) ->
-      let n1 = evalo E c1
-      let n2 = evalo E c2
-      n1 - n2
-  | Max (c1, c2) ->
-      let n1 = evalo E c1
-      let n2 = evalo E c2
-      max (n1) (n2)
+/// <summary>
+/// Runs a Monte Carlo simulation to estimate the expected value of a given contract.
+/// Uses the given options underlying stocks to generate stock price before simulation.
+/// </summary>
+/// <param name="c1">The contract to simulate.</param>
+/// <returns>The expected value of the option.</returns>
+let simulateContract (c1 : Contract) : float = // The reason why this function has to be so complicated is that we need to simulate sims amount of stock prices first, and then use these for the evaluation of contracts. For each evaluation, we need to use a different stock price, otherwise we just get the same price for each simulation!
+    let generateStockPrices (stocksInfo: (string * int) list) (sims: int) : Map<(string * int), float list> =
+        stocksInfo
+        |> List.map (fun (stock, maturityDate) -> (stock, maturityDate), [for _ in 1..sims -> List.head(mc1 [stock] maturityDate 1.0)])
+        |> Map.ofList
 
+    let lookup_stock_prices (stockPrices: Map<(string * int), float list> ref) (stock: string) (maturityDate: int) =
+        let key = (stock, maturityDate)
+        let prices = Map.find key !stockPrices // mutable so we can remove stockPrices when they have been used in the simulation
+        let price = List.head prices
+        let updatedPrices = List.tail prices
+        stockPrices := Map.add key updatedPrices !stockPrices
+        price
+    let sims : int = 100_000
+    let stockList : Obs List = getStocksAsObs c1
+    let stocksInfo : (string * int) list =
+        stockList
+        |> List.collect (fun o ->
+            let stocks = get_stocks_from_obs o
+            let maturityDate = getObsMaturityDate o
+            List.zip stocks (List.replicate (List.length stocks) maturityDate))
+        |> List.distinct
+        |> List.sort
+    let stockPrices : Map<(string * int),float list> ref = ref (generateStockPrices stocksInfo sims)
 
+    let E (stockAndMaturity: string * int) = lookup_stock_prices stockPrices (fst stockAndMaturity) (snd stockAndMaturity)
+    let evaluations : float list = [for _ in 1..sims -> evalc I E c1]
+    evaluations
+    |> List.average
 
-// function to evaluate contracts
-let rec evalc (I:int->float) (E:(string*int)->float) (c: Contract) : float =
-  match c with
-  | One _ -> 1.0 // only working with one currency for now, fix later
-  | Scale (obs, c1) -> evalo E obs * evalc I E c1 
-  | All [] -> 0.0
-  | All (c1::cs) -> evalc I E c1 + evalc I E (All cs)
-  | Acquire(i, c1) -> I(i) * evalc I E c1 
-  | Or(c1, c2) -> evalc I E c1 + evalc I E c2 
-  | Give(c1) -> -1.0 * evalc I E c1 
-  | Anytime(c1) -> evalc I E c1 
-  | Then(c1, c2) -> if getMaturityDate(c1) > 0 then evalc I E c1 else evalc I E c2
-
-// find stock price, needs fix
-let rec E(name: string, t: int) : float =  
-    match t with
-    | t when t >= 1 -> 
-        (*let current_price = E(name, 0)
-        let mu = 0.1
-        let sigma = 1.0 
-        List.init 1000000 (fun _ -> GBM(current_price, mu, sigma, t))
-        |> List.average
-        100.0 *)
-        E(name, 0) * exp((0.0 - 0.2**2.0 / 2.0) * float t) // lets look up the parameters maybe?? how should this be implemented
-    | t when t <= 0 -> 100.0 // get price from api, csv or alike
-
-
-let simStocks (c : Contract) (stocks : (string * float * float * float) list) : (string * (int * float) list) list = // stocks is name * mu * sigma. This function lets you simulate prices for mulitple stocks
-    let simulate (currentPrice: float) (days : int) (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = // returns days * prices. 
-        let dates : int list = [0 .. 1 .. days]
-        let GBM : float list = GeometricBrownianMotion(currentPrice, 0, days, 1, mu, sigma, wpValues)
-        List.map2 (fun d p -> (d, p)) dates GBM
-
-    let wpValues = WienerProcess(0, (getMaturityDate c), 1)
-    // 1 because we are assuming day time increments
-    let sim : (string * (int * float) list) list = // simulate stock prices
-        List.map (fun (s, S0, mu, sigma) -> (s,simulate S0 (getMaturityDate c) mu sigma wpValues)) stocks  
-    sim
-
-
-let mc1(c : Contract) (stocks : (string * float * float * float) list) : float =  
-    let data = simStocks c stocks 
-    let E(s,n) : float = 
-        let stockdata = List.find(fun (s',_) -> s = s') data |> snd
-        let quote = List.find(fun(n',_) -> n = n' ) stockdata |> snd
-        quote
-    evalc I E c
-
-// simulate stock prices sims amount of times and take the average (MC simulation)
-let mc (c : Contract) (sims : int) (stocks : (string * float * float * float) list) : float =  
-    let rec loop (i: int) (acc : float) : float =  // using recursion because otherwise we have to change seed everytime
-        if i = sims then acc
-        else loop (i + 1) (mc1 c stocks + acc)
-    loop 0 (float sims) / float sims
+    
