@@ -1,25 +1,30 @@
-﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{11D72650-E699-4D3C-9C07-3BDE0A0C0393}|Default">
+﻿<Properties StartupConfiguration="{11D72650-E699-4D3C-9C07-3BDE0A0C0393}|Default" GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/src/Program.fs" relfile="src/Program.fs" line="11" column="1" />
+      <Breakpoint file="/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/src/Program.fs" relfile="src/Program.fs" line="12" column="1" />
+      <Breakpoint file="/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/src/Program.fs" relfile="src/Program.fs" line="13" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.BachelorThesis PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="src/Analysis.fs">
     <Files>
-      <File FileName="src/DSL.fs" Line="30" Column="1" IsPinned="True" />
-      <File FileName="src/Program.fs" Line="12" Column="14" />
-      <File FileName="src/Analysis.fs" Line="144" Column="28" />
-      <File FileName="src/XML.fs" Line="118" Column="1" />
-      <File FileName="tests/Tests.fs" Line="37" Column="1" />
-      <File FileName="src/simulations.fs" Line="37" Column="1" />
-      <File FileName="BachelorThesis.fsproj" />
+      <File FileName="src/DSL.fs" Line="40" Column="1" IsPinned="True" />
+      <File FileName="src/Program.fs" Line="12" Column="1" />
+      <File FileName="src/Analysis.fs" Line="59" Column="14" />
+      <File FileName="src/Evaluations.fs" Line="4" Column="20" />
+      <File FileName="tests/Tests.fs" Line="5" Column="14" />
+      <File FileName="src/simulations.fs" Line="92" Column="1" />
+      <File FileName="BachelorThesis.fsproj" Line="13" Column="41" />
+      <File FileName="src/stock_data.xml" Line="8" Column="1" />
+      <File FileName="src/XML.fs" Line="2" Column="12" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="BachelorThesis" expanded="True" selected="True">
+          <Node name="BachelorThesis" expanded="True">
             <Node name="BachelorThesis" expanded="True">
               <Node name="Dependencies" expanded="True">
                 <Node name="PackageDependencies" expanded="True" />
@@ -32,4 +37,5 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.BachelorThesis PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>

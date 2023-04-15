@@ -9,9 +9,9 @@ open XMLFunctions // Import XMLFunctions module
 
 let main args =
     let callValue = simulateContract exampleEuropeanCallOption
-    //let putValue = simulateContract exampleEuropeanPutOption
-    //let forwardValue = simulateContract exampleForward
-    //let newContract = All([exampleEuropeanCallOption; exampleEuropeanPutOption; exampleForward])
+    let putValue = simulateContract exampleEuropeanPutOption
+    let forwardValue = simulateContract exampleForward
+    let newContract = simulateContract (All([exampleEuropeanCallOption; exampleEuropeanPutOption; exampleForward]))
     //let contractValue = simulateContract newContract
     //let dikuA = Underlying("DIKU A/S", 10)
     //let dikuB = Underlying("DIKU A/S", 5)
@@ -21,4 +21,7 @@ let main args =
     //let result = stockObs [exampleEuropeanCallOption; exampleEuropeanPutOption; exampleForward]
     //let realresult = List.map getUnderlyingInfo result |> List.distinct
     printfn "%A" callValue
+    printfn "%A" putValue
+    printfn "%A" forwardValue
+    printfn "%A" newContract
 main []

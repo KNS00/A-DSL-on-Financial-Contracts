@@ -61,7 +61,7 @@ let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : in
 /// <param name="dt">The time step for the simulation.</param>
 /// <param name="wpValues">A list of floats that represent a Wiener Process.</param>
 /// <returns>A list of tuples, each containing a stock name and a list of simulated prices on the date t.</returns>
-let simStocks (stocks : string list) (t : int) (dt : float) (wpValues : float list) : (string * (int * float) list) list =
+(*let simStocks (stocks : string list) (t : int) (dt : float) (wpValues : float list) : (string * (int * float) list) list =
     let simulate (currentPrice: float)  (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = 
         let dates : int list = [0 .. int dt .. t]
         let GBM : float list = GeometricBrownianMotion(currentPrice, 0, t, dt, mu, sigma, wpValues)
@@ -72,8 +72,19 @@ let simStocks (stocks : string list) (t : int) (dt : float) (wpValues : float li
     let sim : (string * (int * float) list) list = 
         stockParameters
         |> List.map (fun (S0, mu, sigma) -> (stocks |> List.find (fun s -> XMLFunctions.getStockParameters s = Some(S0, mu, sigma)), simulate S0 mu sigma wpValues)) 
-    sim
+    sim*)
 
+
+let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
+    let wpValues = WienerProcess(0, t, dt)
+    let simulate (currentPrice: float)  (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = 
+        let dates : int list = [0 .. int dt .. t]
+        let GBM : float list = GeometricBrownianMotion(currentPrice, 0, t, dt, mu, sigma, wpValues)
+        List.map2 (fun d p -> (d, p)) dates GBM
+    match XMLFunctions.getStockParameters stock with 
+    | None -> failwith "Stock was not found"
+    | Some (S0, mu, sigma) -> simulate S0 mu sigma wpValues
+    
 
 /// <summary>
 /// A single simulation of the given list of stocks for a given time period.
@@ -82,29 +93,31 @@ let simStocks (stocks : string list) (t : int) (dt : float) (wpValues : float li
 /// <param name="t">The number of days from the simulation start date to the simulation end date.</param>
 /// <param name="dt">The size of the time steps for the simulation.</param>
 /// <returns>A list of simulated stock prices for each stock in the list.</returns>
-let mc1 (stocks : string list) (t : int) (dt : float) : float list =
-    let wpValues = WienerProcess(0, t, dt)
-    let data = simStocks stocks t dt wpValues
-    let E (s, n) : float =
-        let stockData = List.find (fun (s', _) -> s = s') data |> snd
-        let quote = List.find (fun (n', _) -> n = n') stockData |> snd
-        quote
-    data |> List.map (fun (_, prices) -> List.map snd prices |> List.last)
-
+let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), float> =
+    let data =
+        stocks
+        |> List.collect (fun (s : string) -> // Collect is the same as map but where we flatten the list afterwards.
+            let stockData = simStock s t dt
+            stockData |> List.map (fun (i : int, f : float) -> ((s, i), f)) 
+        )
+    data |> Map.ofList
+    (*
+let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), float> =
+    let data : ((string * int) * float) list list =
+        List.map (fun (s : string) ->
+                                let stockData = simStock : (int * float) list s t dt
+                                List.map (fun (p : int * float) -> ((s, fst p), snd p)) stockData
+       ) stocks
+    data |> List.concat |> Map.ofList
+    *)
 /// <summary>
-/// Evaluates the value of a stock at a given point in time.
+/// Runs a Monte Carlo simulation to estimate the price of a portfolio of stocks at a given time. Also updates the XML file with these prices.
 /// </summary>
-/// <param name="name">The name of the stock to evaluate.</param>
-/// <param name="t">The point in time to evaluate the stock at.</param>
-/// <returns>The value of the stock at the time as a float.</returns>
-let rec E(name: string, t: int) : float =  
-  match XMLFunctions.getPrice name t with
-  | Some price -> price
-  | None ->
-      //List.head (stockSimulations.mc [name] 100_000 t 1.0)
-    List.head (mc1 [name] t 1.0)
-
-
+/// <param name="stocks">A list of stocks to simulate.</param>
+/// <param name="sims">The number of simulations to run.</param>
+/// <param name="t">The number of days from the simulation start date to the simulation end date.</param>
+/// <param name="dt">The size of the time steps for the simulation.</param>
+/// <returns>A list of estimated portfolio prices for each stock.</returns>
 (*
 let simulateStocks (o : Obs list) (stocks : string list) (t : int) (dt : float): float list =
     let sims = 100_000
@@ -166,3 +179,8 @@ plot
 |> Chart.WithYTitle "Price"
 |> Chart.WithLegend true
 *)
+
+
+
+
+
