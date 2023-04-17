@@ -13,15 +13,16 @@ open Domain
 
 
 /// <summary>
-/// Calculates the interest rate for a given time period.
+/// Discounts the value back in time according to the interest rate.
 /// </summary>
 /// <param name="i">The time period in days.</param>
-/// <returns>The interest rate as a float.</returns>
+/// <returns>The value 1 discounted to the current time.</returns>
 let I (i : int) : float = 
-    let yearlyInterestRate = 0.02 // assume 0.02
-    exp(yearlyInterestRate * float(i)/365.0) //
-
-
+    let yearlyInterestRate : float = 0.02 // assume 0.02
+    let dailyInterestRate : float = yearlyInterestRate / float i
+    //exp(yearlyInterestRate * float(i)/365.0) 
+    let presentValue = 1.0/((1.0+dailyInterestRate)**float i)
+    presentValue
 
 /// <summary>
 /// Generates a Wiener Process of normally distributed random numbers.
@@ -53,27 +54,6 @@ let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : in
     List.mapi (fun i _ -> currentPrice * exp((mu - 0.5 * sigma**2.0) * float t.[i] + sigma * wpValues.[i])) t
     // List.mapi (fun i _ -> currentPrice * exp((mu - 0.5 * sigma**2.0) * float t.[i] + sigma * sqrt(float t.[i]) * wpValues.[i])) t
 
-/// <summary>
-/// Simulates a list of stocks.
-/// </summary>
-/// <param name="stocks">A list of the names of the stocks to simulate.</param>
-/// <param name="t">The time horizon for the simulation, in days.</param>
-/// <param name="dt">The time step for the simulation.</param>
-/// <param name="wpValues">A list of floats that represent a Wiener Process.</param>
-/// <returns>A list of tuples, each containing a stock name and a list of simulated prices on the date t.</returns>
-(*let simStocks (stocks : string list) (t : int) (dt : float) (wpValues : float list) : (string * (int * float) list) list =
-    let simulate (currentPrice: float)  (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = 
-        let dates : int list = [0 .. int dt .. t]
-        let GBM : float list = GeometricBrownianMotion(currentPrice, 0, t, dt, mu, sigma, wpValues)
-        List.map2 (fun d p -> (d, p)) dates GBM
-    let stockParameters = 
-        stocks 
-        |> List.choose (fun s -> XMLFunctions.getStockParameters s) 
-    let sim : (string * (int * float) list) list = 
-        stockParameters
-        |> List.map (fun (S0, mu, sigma) -> (stocks |> List.find (fun s -> XMLFunctions.getStockParameters s = Some(S0, mu, sigma)), simulate S0 mu sigma wpValues)) 
-    sim*)
-
 
 let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
     let wpValues = WienerProcess(0, t, dt)
@@ -101,41 +81,6 @@ let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), fl
             stockData |> List.map (fun (i : int, f : float) -> ((s, i), f)) 
         )
     data |> Map.ofList
-    (*
-let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), float> =
-    let data : ((string * int) * float) list list =
-        List.map (fun (s : string) ->
-                                let stockData = simStock : (int * float) list s t dt
-                                List.map (fun (p : int * float) -> ((s, fst p), snd p)) stockData
-       ) stocks
-    data |> List.concat |> Map.ofList
-    *)
-/// <summary>
-/// Runs a Monte Carlo simulation to estimate the price of a portfolio of stocks at a given time. Also updates the XML file with these prices.
-/// </summary>
-/// <param name="stocks">A list of stocks to simulate.</param>
-/// <param name="sims">The number of simulations to run.</param>
-/// <param name="t">The number of days from the simulation start date to the simulation end date.</param>
-/// <param name="dt">The size of the time steps for the simulation.</param>
-/// <returns>A list of estimated portfolio prices for each stock.</returns>
-(*
-let simulateStocks (o : Obs list) (stocks : string list) (t : int) (dt : float): float list =
-    let sims = 100_000
-    let simulate () : float list = 
-        let rec loop (i: int) (acc : float list) : float list =
-            if i = sims then acc
-            else 
-                let simulationResults = mc1 stocks t dt
-                let updatedAcc = List.map2 (+) acc simulationResults
-                loop (i + 1) updatedAcc
-        let totalSimulatedPrices = loop 0 (List.init (List.length stocks) (fun _ -> 0.0))
-        let averageSimulatedPrices = List.map (fun x -> x / float sims) totalSimulatedPrices
-        averageSimulatedPrices
-    let averagePrices = simulate ()
-    List.iter2 (fun stockName avgPrice -> XMLFunctions.updateStockData stockName t avgPrice) stocks averagePrices
-    averagePrices
-    *)
-
 
 
 

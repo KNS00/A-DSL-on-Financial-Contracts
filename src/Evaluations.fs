@@ -56,7 +56,7 @@ let rec evalc (I:int->float) (E:(string*int)->float) (c: Contract) : float =
   | Scale (obs, c1) -> evalo E obs * evalc I E c1 
   | All [] -> 0.0
   | All (c1::cs) -> evalc I E c1 + evalc I E (All cs)
-  | Acquire(i, c1) -> I(i) * evalc I E c1 
+  | Acquire(t, c1) -> I t * evalc I E c1 
   | Or(c1, c2) -> evalc I E c1 + evalc I E c2 
   | Give(c1) -> -1.0 * evalc I E c1 
   | Anytime(c1) -> evalc I E c1 
