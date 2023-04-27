@@ -19,5 +19,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
       <GeneratePathProperty></GeneratePathProperty>
     </PackageReference>
+    <PackageReference Include="FsUnit" Version="5.2.0">
+      <GeneratePathProperty></GeneratePathProperty>
+    </PackageReference>
+    <Compile Include="src\Examples.fs" />
   </ItemGroup>
 </Project>
