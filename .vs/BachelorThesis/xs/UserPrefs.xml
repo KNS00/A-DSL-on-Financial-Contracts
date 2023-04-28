@@ -1,25 +1,10 @@
 ﻿<Properties StartupConfiguration="{11D72650-E699-4D3C-9C07-3BDE0A0C0393}|Default" GitUserInfo="UsingGIT">
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/src/Program.fs" relfile="src/Program.fs" line="11" column="1" />
-      <Breakpoint file="/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/src/Program.fs" relfile="src/Program.fs" line="12" column="1" />
-      <Breakpoint file="/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/src/Program.fs" relfile="src/Program.fs" line="13" column="1" />
-    </BreakpointStore>
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="src/Analysis.fs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.ItemProperties.BachelorThesis PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="src/Simulations.fs">
     <Files>
-      <File FileName="src/DSL.fs" Line="40" Column="1" IsPinned="True" />
-      <File FileName="src/Program.fs" Line="12" Column="1" />
-      <File FileName="src/Analysis.fs" Line="59" Column="14" />
-      <File FileName="src/Evaluations.fs" Line="4" Column="20" />
-      <File FileName="tests/Tests.fs" Line="5" Column="14" />
-      <File FileName="src/simulations.fs" Line="92" Column="1" />
-      <File FileName="BachelorThesis.fsproj" Line="13" Column="41" />
-      <File FileName="src/stock_data.xml" Line="8" Column="1" />
-      <File FileName="src/XML.fs" Line="2" Column="12" />
+      <File FileName="src/Simulations.fs" Line="1" Column="1" IsPinned="True" />
+      <File FileName="tests/Tests.fs" Line="4" Column="6" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -29,7 +14,9 @@
               <Node name="Dependencies" expanded="True">
                 <Node name="PackageDependencies" expanded="True" />
               </Node>
-              <Node name="src" expanded="True" />
+              <Node name="src" expanded="True">
+                <Node name="Simulations.fs" selected="True" />
+              </Node>
               <Node name="tests" expanded="True" />
             </Node>
           </Node>
@@ -37,5 +24,9 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.BachelorThesis PreferredExecutionTarget="MonoDevelop.Default" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>

@@ -20,7 +20,7 @@
           "net7.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/sdk/7.0.202/FSharp/library-packs": {},
+          "/usr/local/share/dotnet/sdk/7.0.203/FSharp/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -50,19 +50,42 @@
               "version": "[0.4.11, )",
               "generatePathProperty": true
             },
+            "FsUnit": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            },
+            "FsUnit.xUnit": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            },
             "MathNet.Numerics.FSharp": {
               "target": "Package",
               "version": "[5.0.0, )",
               "generatePathProperty": true
             },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.5.0, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[13.0.3, )"
+              "version": "[13.0.3, )",
+              "generatePathProperty": true
             },
             "XPlot.Plotly": {
               "target": "Package",
               "version": "[4.0.6, )",
               "generatePathProperty": true
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.4.5, )"
             }
           },
           "imports": [
@@ -81,7 +104,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
         }
       }
     }
