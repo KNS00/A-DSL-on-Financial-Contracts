@@ -125,3 +125,8 @@ module evalcTests =
     [<Theory>]
     let ``evalc with One``(input : Contract, expectedOutput) =
         0.0
+
+module testSimulations =
+    
+    let ``discount function should correctly discount back the value``(input, expectedOutput) =
+        0.0
