@@ -36,7 +36,7 @@ module evaloTests =
     [<InlineData("AAPL", 3)>]   // Underlying("AAPL", 3)    = E("AAPL", 3)
     [<InlineData("AAPL", 5)>]   // Underlying("AAPL", 5)    = E("DIKU", 5)
     [<InlineData("AAPL", 6)>]   // Underlying("DIKU", 6)    = E("DIKU", 6)
-    let ``èvalo with Underlying should return the output of E``(input : (string * int)) =
+    let ``evalo with Underlying should return the output of E``(input : (string * int)) =
         let expectedOutput = E(input)
         evalo E (Underlying input) |> should equal expectedOutput
 
