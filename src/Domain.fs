@@ -26,7 +26,6 @@ type Contract = // All these constructers are used to define a contract.
   | Acquire of int * Contract // Acquire contract int days from now
   | Give of Contract // need datetime aswell here imo. Keep in mind that this is not the ACTION of giving. It is simply just a part of defining a contract.
   | Or of Contract * Contract
-  | Anytime of Contract // used for American options
   | Then of Contract * Contract // Then(c1, c2) means you acquire c1 if it has not expired; else c2.
 
 /// <summary>
@@ -57,7 +56,6 @@ let rec getMaturityDate (c : Contract) : int =
     | Acquire (i, c1) -> max i (getMaturityDate c1)
     | Or (c1, c2) -> max (getMaturityDate c1) (getMaturityDate c2)
     | Give c1 -> getMaturityDate c1
-    | Anytime c1 -> getMaturityDate c1
     | Then (c1, c2) -> max (getMaturityDate c1) (getMaturityDate c2)
 
 /// <summary>
@@ -79,7 +77,6 @@ let rec getStocks (c: Contract) : string list =
         let stocks_in_c1 = getStocks c1
         let stocks_in_c2 = getStocks c2
         List.append stocks_in_c1 stocks_in_c2 |> List.distinct |> List.sort
-    | Anytime c' -> getStocks c'
     | Then (c1, c2) ->
         let stocks_in_c1 = getStocks c1
         let stocks_in_c2 = getStocks c2
@@ -140,7 +137,6 @@ let rec getStocksAsObs (c: Contract) : Obs list =
         let stocks_in_c1 = getStocksAsObs c1
         let stocks_in_c2 = getStocksAsObs c2
         List.append stocks_in_c1 stocks_in_c2 |> List.distinct
-    | Anytime c' -> getStocksAsObs c'
     | Then (c1, c2) ->
         let stocks_in_c1 = getStocksAsObs c1
         let stocks_in_c2 = getStocksAsObs c2
