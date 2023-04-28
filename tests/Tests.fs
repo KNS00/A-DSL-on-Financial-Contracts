@@ -3,106 +3,125 @@ open Domain
 open Evaluations
 open Simulations
 open Analysis
-let flow(i: int, v: double, c: Currency) : Contract
-    = Acquire(i,Scale(Value v, One c))
-
-let zcb1: Contract = 
-  let maturityDate : int = 10
-  flow(maturityDate, 100.0, USD)
+open FsUnit
+open Xunit
 
 
-let dividendPayingBond : Contract = 
-  let maturityDate = 120
-  let pct = 0.02
-  let qPct : float = exp(pct * 1.0/4.0)
-  let investment = 100.0
-  let quarterlyPayments: Contract = 
-    let payment = qPct * investment
-    All([
-        flow(30, payment, USD);
-        flow(60, payment, USD);    
-        flow(90, payment, USD);    
-        flow(120, payment, USD)])
-  Then(quarterlyPayments, flow(maturityDate, investment, USD))
+module evaloTests = 
+    let E (s: string, t: int) = // test E function: for testing, returns 0.0 if the stock is not found
+        match s, t with
+        | "AAPL", 1 -> 100.23
+        | "AAPL", 3 -> 104.33
+        | "AAPL", 5 -> 108.11
+        | "GOOG", 1 -> 200.54
+        | "GOOG", 5 -> 216.34
+        | "MSFT", 2 -> 23.03
+        | _ -> 0.0
+
+    [<Theory>]
+    [<InlineData(10.0, 10.0)>]      // Value 10.0 = 10.0
+    [<InlineData(50.0, 50.0)>]      // Value 50.0 = 50.0
+    [<InlineData(0.0, 0.0)>]        // Value 0.0 = 0.0
+    [<InlineData(-10.0, -10.0)>]    // Value -10.0 = -10.0
+    [<InlineData(100.0, 100.0)>]    // Value 100.0 = 100.0
+    let ``evalo with Value should return the value itself``(input, expectedOutput) =
+        evalo E (Value input) |> should equal expectedOutput
+
+    [<Theory>]
+    [<InlineData("AAPL", 1)>]   // Underlying("AAPL", 1)    = E("AAPL", 1) 
+    [<InlineData("DIKU", 3)>]   // Underlying("DIKU", 3)    = E("DIKU", 3) 
+    [<InlineData("GOOG", -17)>] // Underlying("GOOG", -17)  = E("GOOG", -17) 
+    [<InlineData("GOOG", 1)>]   // Underlying("GOOG", 1)    = E("DIKU", 1) 
+    [<InlineData("MSFT", 2)>]   // Underlying("MSFT", 2)    = E("MSFT", 2)
+    [<InlineData("AAPL", 3)>]   // Underlying("AAPL", 3)    = E("AAPL", 3)
+    [<InlineData("AAPL", 5)>]   // Underlying("AAPL", 5)    = E("DIKU", 5)
+    [<InlineData("AAPL", 6)>]   // Underlying("DIKU", 6)    = E("DIKU", 6)
+    let ``èvalo with Underlying should return the output of E``(input : (string * int)) =
+        let expectedOutput = E(input)
+        evalo E (Underlying input) |> should equal expectedOutput
 
 
 
-// A contract containing the acquisition of 10 DKK, 5 days from now.
-//let contract4 = flow(365, 100.0, EUR) // A contract containing the acquisition of 100 EUR 365 days from now.
-//let contract5 = All([contract1; contract2; contract3; contract4])
+    [<Theory>]
+    [<InlineData(0.0, 0.0, 0.0)>]       // 0.0 * 0.0 = 0.0
+    [<InlineData(1.0, 0.0, 0.0)>]       // 1.0 * 0.0 = 0.0
+    [<InlineData(0.0, 1.0, 0.0)>]       // 0.0 * 1.0 = 0.0
+    [<InlineData(0.5, 0.5, 0.25)>]      // 0.5 * 0.5 = 0.25
+    [<InlineData(3.0, 4.0, 12.0)>]      // 3.0 * 4.0 = 12.0
+    [<InlineData(10.0, -10.0, -100.0)>] // 10.0 * -10.0 = -100.0
+    [<InlineData(-10.0, 10.0, -100.0)>] // -10.0 * 10.0 = -100.0
+    [<InlineData(-5.0, -5.0, 25.0)>]    // -5.0 * -5.0 = 25.0
+    [<InlineData(-1.0, -1.0, 1.0)>]     // -1.0 * -1.0 = 1.0
+    [<InlineData(1.5, 2.5, 3.75)>]      // 1.5 * 2.5 = 3.75
+    [<InlineData(2.0, 2.0, 4.0)>]       // 2.0 * 2.0 = 4.0
+    [<InlineData(0.0, 10.0, 10.0)>]     // 0.0 * 10.0 = 0.0
+    [<InlineData(10.0, 0.0, 0.0)>]      // 10.0 * 0.0 = 0.0
+    [<InlineData(2.5, 2.5, 6.25)>]      // 2.5 * 2.5 = 6.25
+    let ``evalo with Mul``(input : float * float, expectedOutput) =
+        let (obs1, obs2) : Obs * Obs = (Value (fst input), Value (snd input))
+        evalo E (Mul (obs1, obs2)) |> should equal expectedOutput
 
-// Call option
-let exampleEuropeanCallOption : Contract =
-    let underlying = "DIKU A/S"
-    let strike = 100.0 
-    let maturity = 30
-    let currency = USD
-    let payoff = 
-        Max(Value 0.0,
-            Sub(Underlying(underlying, maturity), Value (strike * I maturity)))
-    Scale(payoff, One currency)
+    [<Theory>]
+    [<InlineData(10.0, 10.0, 20.0)>]    // 10.0 + 10.0 = 20.0
+    [<InlineData(0.0, 0.0, 0.0)>]       // 0.0 + 0.0 = 0.0
+    [<InlineData(1.0, 0.0, 1.0)>]       // 1.0 + 0.0 = 1.0
+    [<InlineData(0.0, 1.0, 1.0)>]       // 0.0 + 1.0 = 1.0
+    [<InlineData(0.5, 0.5, 1.0)>]       // 0.5 + 0.5 = 1.0
+    [<InlineData(3.0, 4.0, 7.0)>]       // 3.0 + 4.0 = 7.0
+    [<InlineData(10.0, -10.0, 0.0)>]    // 10.0 + -10.0 = 0.0
+    [<InlineData(-10.0, 10.0, 0.0)>]    // -10.0 + 10.0 = 0.0
+    [<InlineData(-5.0, -5.0, -10.0)>]   // -5.0 + -5.0 = -10.0
+    [<InlineData(-1.0, -1.0, -2.0)>]    // -1.0 + -1.0 = -2.0
+    [<InlineData(1.5, 2.5, 4.0)>]       // 1.5 + 2.5 = 4.0
+    [<InlineData(2.0, 2.0, 4.0)>]       // 2.0 + 2.0 = 4.0
+    [<InlineData(0.0, 10.0, 10.0)>]     // 0.0 + 10.0 = 10.0
+    [<InlineData(10.0, 0.0, 10.0)>]     // 10.0 + 0.0 = 10.0
+    [<InlineData(2.5, 2.5, 5.0)>]       // 2.5 + 2.5 = 5.0
+    let ``evalo with Add``(input : float * float, expectedOutput) =
+        let (obs1, obs2) : Obs * Obs = (Value (fst input), Value (snd input))
+        evalo E (Add (obs1, obs2)) |> should equal expectedOutput
 
-let exampleEuropeanPutOption : Contract =
-    let underlying = "DIKU A/S"
-    let strike = 100.0 
-    let maturity = 30
-    let currency = USD
-    let payoff = 
-        Max(Value 0.0, Sub(Value (strike * I maturity), Underlying(underlying, maturity)))
-    Scale(payoff, One currency)
+    [<Theory>]
+    [<InlineData(10.0, 10.0, 0.0)>]     // 10.0 - 10.0 = 0.0
+    [<InlineData(0.0, 0.0, 0.0)>]       // 0.0 - 0.0 = 0.0
+    [<InlineData(1.0, 0.0, 1.0)>]       // 1.0 - 0.0 = 1.0
+    [<InlineData(0.0, 1.0, -1.0)>]      // 0.0 - 1.0 = -1.0
+    [<InlineData(0.5, 0.5, 0.0)>]       // 0.5 - 0.5 = 0.0
+    [<InlineData(3.0, 4.0, -1.0)>]      // 3.0 - 4.0 = -1.0
+    [<InlineData(10.0, -10.0, 20.0)>]   // 10.0 - (-10.0) = 20.0
+    [<InlineData(-10.0, 10.0, -20.0)>]  // (-10.0) - 10.0 = -20.0
+    [<InlineData(-5.0, -5.0, 0.0)>]     // (-5.0) - (-5.0) = 0.0
+    [<InlineData(-1.0, -1.0, 0.0)>]     // (-1.0) - (-1.0) = 0.0
+    [<InlineData(1.5, 2.5, -1.0)>]      // 1.5 - 2.5 = -1.0
+    [<InlineData(2.0, 2.0, 0.0)>]       // 2.0 - 2.0 = 0.0
+    [<InlineData(0.0, 10.0, -10.0)>]    // 0.0 - 10.0 = -10.0
+    [<InlineData(10.0, 0.0, 10.0)>]     // 10.0 - 0.0 = 10.0
+    [<InlineData(2.5, 2.5, 0.0)>]       // 2.5 - 2.5 = 0.0
+    let ``evalo with Sub``(input : float * float, expectedOutput) =
+        let (obs1, obs2) : Obs * Obs = (Value (fst input), Value (snd input))
+        evalo E (Sub (obs1, obs2)) |> should equal expectedOutput
 
-let exampleForward : Contract =
-    let underlying = "DIKU A/S"
-    let strike = 100.0 
-    let maturity = 30
-    let currency = USD
-    let payoff = Sub(Underlying(underlying, maturity), Value (strike * I maturity))
-    Scale(payoff, One currency)
+
+    [<Theory>]
+    [<InlineData(10.0, 10.0, 10.0)>]    // max(10.0, 10.0) = 10.0
+    [<InlineData(0.0, 0.0, 0.0)>]       // max(0.0, 0) = 0.0
+    [<InlineData(1.0, 0.0, 1.0)>]       // max(1.0, 0.0) = 1.0
+    [<InlineData(0.0, 1.0, 1.0)>]       // max(0.0, 1.0) = 1.0
+    [<InlineData(0.5, 0.5, 0.5)>]       // max(0.5, 0.5) = 0.5
+    [<InlineData(3.0, 4.0, 4.0)>]       // max(3.0, 4.0) = 4.0
+    [<InlineData(10.0, -10.0, 10.0)>]   // max(10.0, -10.0) = 10.0
+    [<InlineData(-10.0, 10.0, 10.0)>]   // max(-10.0, 10.0) = 10.0
+    [<InlineData(-5.0, -5.0, -5.0)>]    // max(-5.0, -5.0) = -5.0
+    [<InlineData(-1.0, -1.0, -1.0)>]    // max(-1.0, -1.0) = -1.0
+    [<InlineData(1.5, 2.5, 2.5)>]       // max(1.5, 2.5) = 2.5
+    [<InlineData(0.0, 10.0, 10.0)>]     // max(0.0, 10.0) = 10.0
+    [<InlineData(10.0, 0.0, 10.0)>]     // max(10.0, 0.0) = 10.0
+    let ``evalo with Max``(input : float * float, expectedOutput) =
+        let (obs1, obs2) : Obs * Obs = (Value (fst input), Value (snd input))
+        evalo E (Max (obs1, obs2)) |> should equal expectedOutput
 
 
-let exampleCurrencySwap : Contract =
-    let notional1 = 1000000.0
-    let currency1 = USD
-    let notional2 = 900000.0
-    let currency2 = EUR
-    let maturity = 30
-
-    let leg1 = Scale(Value notional1, One currency1)
-    let leg2 = Scale(Value notional2, One currency2)
-    Then(leg1, Acquire(maturity, leg2))
-
-let exampleFixedRateBond : Contract =
-    let principal = 1000.0
-    let rate = 0.05
-    let maturity = 30
-    let currency = USD
-    let coupon = Scale(Value (principal * rate), One currency)
-    let principalAtMaturity = Scale(Value principal, One currency)
-    All [coupon; Acquire(maturity, principalAtMaturity)]
-    
-
-let testParity(call : Contract, put : Contract, strike : float) = // C - P - S + K * I() = 0
-    let callValue = simulateContract call
-    let putValue = simulateContract put
-    let underlying1 = getStocks call
-    let underlying2 = getStocks put
-    let S0 : float = 
-        match underlying1, underlying2 with
-        | _ when underlying1 = underlying2 ->
-            if List.length underlying1 = 1 then
-                let stockName = List.head underlying1
-                match XMLFunctions.getPrice stockName 0 with
-                | Some price -> price
-                | None -> failwith (sprintf "Price not available for %s" stockName)
-            else
-                failwith "underlying has more than one stock"
-        | _ -> failwith "different underlying stocks"
-    let maturityDate1 = getMaturityDate(call)
-    let maturityDate2 = getMaturityDate(put)
-    match maturityDate1, maturityDate2 with
-    | _ when maturityDate1 = maturityDate2 -> None |> ignore
-    | _ -> failwith "maturity dates are not equal" 
-
-    let parity =
-        callValue + putValue - S0 + strike * I(maturityDate1)
-    parity
+module evalcTests =
+    [<Theory>]
+    let ``evalc with One``(input : Contract, expectedOutput) =
+        0.0
