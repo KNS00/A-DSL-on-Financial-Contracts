@@ -2,11 +2,14 @@ module Program
 open Domain
 open Analysis
 open Tests
+open Evaluations
 open Simulations
 open FSharp.Data
 open FSharp.Data.CsvExtensions
 open XMLFunctions // Import XMLFunctions module
-
+open XPlot.Plotly
+open NUnit.Framework
+open FsUnit
 let main args =
     //let callValue = simulateContract exampleEuropeanCallOption
     //let putValue = simulateContract exampleEuropeanPutOption
@@ -24,6 +27,44 @@ let main args =
     //printfn "%A" putValue
     //printfn "%s %A" "parity" parity
     //printfn "%A" (testParity (exampleEuropeanCallOption, exampleEuropeanPutOption, 100.0))
-    printfn "%s %A" "result" (simulateContract exampleEuropeanCallOption)
+
+    let startTime = 0
+    let endTime = 10
+    let dt = 1.0
+    let volatility = 0.2
+    let drift = 0.05
+    let wpValues = WienerProcess(startTime, endTime, dt)
+    let gbmValues = GeometricBrownianMotion(100.0, startTime, endTime, dt, 0.05, 0.2, wpValues)
+
+    let plotWienerProcess = 
+        Scatter(
+            x = [float startTime .. float endTime],
+            y = wpValues,
+            mode = "lines",
+            name = "Wiener Process"
+        )
+
+    let plotGBM = 
+        Scatter(
+            x = [float startTime .. float endTime],
+            y = gbmValues,
+            mode = "lines",
+            name = "Geometric Brownian Motion"
+        )
+
+    let strikePrice = 110.0
+    let callOptionPayoff = gbmValues |> List.map (fun price -> max (price - strikePrice) 0.0)
+
+    let plotCallOptionPayoff = 
+        Scatter(
+            x = [float startTime .. float endTime],
+            y = callOptionPayoff,
+            mode = "lines",
+            name = "Call Option Payoff"
+        )
+
+    let layout = Layout(title = "Wiener Process, Geometric Brownian Motion, and Call Option Payoff")
+    let chart = Chart.Plot([|plotWienerProcess; plotGBM; plotCallOptionPayoff|], layout)
+    //chart.Show()
     0.0
-main []
+main [] |> ignore
