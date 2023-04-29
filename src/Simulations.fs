@@ -48,12 +48,18 @@ let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
 /// <param name="sigma">The volatility parameter for the simulation.</param>
 /// <param name="wpValues">A list of floats that represent a Wiener Process.</param>
 /// <returns>A list of floats that represent the Geometric Brownian Motion.</returns>
-let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma: float, wpValues : float list) : float list =
+let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma : float, wpValues : float list) : float list =
     let t : float list = [float startTime .. dt .. float endTime]
-    List.mapi (fun i _ -> currentPrice * exp((mu - 0.5 * sigma**2.0) * float t.[i] + sigma * wpValues.[i])) t
-    // List.mapi (fun i _ -> currentPrice * exp((mu - 0.5 * sigma**2.0) * float t.[i] + sigma * sqrt(float t.[i]) * wpValues.[i])) t
+    let output (i : int) = currentPrice * exp(((mu - 0.5 * (sigma**2.0)) * t.[i]) + sigma * wpValues.[i])
+    List.mapi (fun i _ -> output i) t
 
-
+/// <summary>
+/// Simulates a stock from now until the given time based on the current price, drift and volatility found in a XML file.
+/// </summary>
+/// <param name="stock">The stock to be simulated.
+/// <param name="t">The end time of the simulation.
+/// <param name="dt">The time increment.
+/// <returns>A tuple list containing the time and price of the stock.
 let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
     let wpValues = WienerProcess(0, t, dt)
     let simulate (currentPrice: float)  (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = 
@@ -61,8 +67,8 @@ let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
         let GBM : float list = GeometricBrownianMotion(currentPrice, 0, t, dt, mu, sigma, wpValues)
         List.map2 (fun d p -> (d, p)) dates GBM
     match XMLFunctions.getStockParameters stock with 
-    | None -> failwith "Stock was not found"
     | Some (S0, mu, sigma) -> simulate S0 mu sigma wpValues
+    | None -> failwith "Stock was not found"
     
 
 /// <summary>
