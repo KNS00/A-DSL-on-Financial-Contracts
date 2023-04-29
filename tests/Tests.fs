@@ -147,7 +147,7 @@ module simulationTests =
         let output = I input
         let isEqual = abs (output - expectedOutput) <= tolerance
         isEqual |> should equal true
-    (*
+    
     [<Theory>] 
     [<InlineData(0, 1, 1.0)>]
     [<InlineData(10, 15, 1.0)>]    
@@ -168,7 +168,7 @@ module simulationTests =
                 printfn "%A" (abs(x) <= tolerance)
             abs(x) <= tolerance)
         isZero |> should equal true
-        *)
+        
         
     [<Theory>] 
     [<InlineData(100.0, 0, 1, 0.1, 1.0, 0.2)>]     // S_0 = 100.0, start = 0, end = 1, dt = 0.1, mu 1.0, sigma = 0.2
