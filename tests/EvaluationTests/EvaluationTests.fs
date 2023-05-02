@@ -122,11 +122,31 @@ module evaloTests =
         Max(Value(0.0), Value(10.0)), 10.0;
         Max(Value(10.0), Value(0.0)), 10.0;
         ]
+
     let ``test Max constructor for eval``() =
         testEvalo MaxTestCases
 
-
+    [<Fact>]
+    let CombinedTestCases : (Obs * float) list = [
+        (Add(Value 10.0, Mul(Value 2.0, Value 5.0)), 20.0);
+        (Mul(Add(Value 3.0, Value 4.0), Value 2.0), 14.0);
+        (Sub(Max(Value 5.0, Value 10.0), Value 3.0), 7.0);
+        (Mul(Value 5.0, Sub(Value 10.0, Value 2.0)), 40.0);
+        (Max(Sub(Value 10.0, Value 5.0), Add(Value 3.0, Value 1.0)), 5.0);
+        (Sub(Add(Value 3.0, Value 4.0), Mul(Value 2.0, Value 2.0)), 3.0);
+        (Add(Mul(Value 2.0, Value 3.0), Sub(Value 10.0, Value 5.0)), 11.0);
+        (Max(Sub(Value 1.0, Value 2.0), Mul(Value 3.0, Value 4.0)), 12.0);
+    ]
+    
+    let ``test combined constructors for evalo``() =
+        testEvalo CombinedTestCases
+    
 module evalccyTests =
+    let testEvalccy(testCases : (Currency * float) list) : unit =
+        testCases
+        |> List.iter (fun (input, expectedOutput) ->
+            evalccy input |> should equal expectedOutput)
+
     [<Fact>]
     let evalccyTestCases =[
         EUR, 1.10;
@@ -135,11 +155,7 @@ module evalccyTests =
         USD, 1.10;
         ]
     let ``evalccy should evaluate currencies correctly``() =
-        let ccy = stringToCurrency ccyInput
-        let output = evalccy ccy
-        let tolerance = 10e-7
-        let isEqual = abs (output - expectedOutput) <= tolerance
-        isEqual |> should equal true
+        testEvalccy evalccyTestCases
 
 
 module evalcTests =
