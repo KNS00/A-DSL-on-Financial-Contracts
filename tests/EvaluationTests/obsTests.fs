@@ -4,9 +4,9 @@ open Evaluations
 open Simulations
 open Analysis
 open Tests
-//open Xunit
 open FsUnit
-(*
+open Xunit
+
 let testE (s: string, t: int) = 
     match s, t with
     | "AAPL", 1 -> 100.23
@@ -139,4 +139,3 @@ let CombinedTestCases : (Obs * float) list = [
 
 let ``test combined constructors for evalo``() =
     testEvalo CombinedTestCases
-*)
