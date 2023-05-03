@@ -5,27 +5,20 @@ open Evaluations
 open Simulations
 open Analysis
 open Tests
+open FsUnit
 open Xunit
 
-(*
-// NUnit code
-let testEvalccy (testCases: (Currency * float) list) =
-    let tolerance = 1e-7
+let testEvalccy(testCases : (Currency * float) list) : unit =
     testCases
-    |> List.iter (fun (currency, expectedRate) ->
-        evalccy currency |> should (equalWithin tolerance) expectedRate)
+    |> List.iter (fun (input, expectedOutput) ->
+        evalccy input |> should equal expectedOutput)
 
-let sampleCurrencies : (Currency * float) list = [
+[<Fact>]
+let evalccyTestCases =[
     EUR, 1.10;
     GBP, 1.24;
     DKK, 0.15;
-    USD, 1.0
-]
-
-[<TestFixture>]
-module EvalccyTests =
-    let ``Evalccy should evaluate currencies correctly``() =
-        testEvalccy sampleCurrencies
-
-
-        *)
+    USD, 1.10;
+    ]
+let ``evalccy should evaluate currencies correctly``() =
+    testEvalccy evalccyTestCases
