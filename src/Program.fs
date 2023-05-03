@@ -1,11 +1,9 @@
 module Program
 open Domain
 open Analysis
-open Tests
 open Evaluations
 open Simulations
 open FSharp.Data
-open FSharp.Data.CsvExtensions
 open XMLFunctions // Import XMLFunctions module
 open XPlot.Plotly
 open NUnit.Framework
