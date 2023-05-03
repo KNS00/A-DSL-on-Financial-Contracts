@@ -15,7 +15,6 @@
     <Compile Include="src\Simulations.fs" />
     <Compile Include="src/Analysis.fs" />
     <Compile Include="src\Examples.fs" />
-    <Compile Include="tests/Tests.fs" />
     <Compile Include="tests\SimulationTests.fs" />
     <Compile Include="tests\EvaluationTests\currencyTests.fs" />
     <Compile Include="tests\EvaluationTests\contractTests.fs" />
