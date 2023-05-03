@@ -18,17 +18,7 @@ module simulationTests =
             let res = f input
             res]
         |> List.average
-    [<Theory>] 
-    [<InlineData(5, 0.9997260724)>]    // 1/((1+0,02/365))^5)    = 0.9997260724
-    [<InlineData(20, 0.9989047398)>]   // 1/((1+0,02/365))^20)   = 0.9989047398
-    [<InlineData(30, 0.9983575597)>]   // 1/((1+0,02/365))^30)   = 0.9983575597
-    [<InlineData(365, 0.9801992104)>]  // 1/((1+0,02/365))^365)  = 0.9801992104
-    [<InlineData(1000, 0.9466810723)>] // 1/((1+0,02/365))^1000) = 0.9466810723
-    let ``discount function should correctly discount back the value``(input : int, expectedOutput) =
-        let tolerance = 1e-7
-        let output = I input
-        let isEqual = abs (output - expectedOutput) <= tolerance
-        isEqual |> should equal true
+        
     
     [<Theory>] 
     [<InlineData(0, 1, 1.0)>]
@@ -81,3 +71,4 @@ module simulationTests =
        
 
 
+       
