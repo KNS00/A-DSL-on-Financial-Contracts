@@ -1,9 +1,8 @@
-﻿module evaloTests
+﻿module observableTests
 open Domain
 open Evaluations
 open Simulations
 open Analysis
-open Tests
 open FsUnit
 open Xunit
 
