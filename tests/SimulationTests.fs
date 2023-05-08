@@ -53,18 +53,11 @@ module simulationTests =
         let test : bool = listsAreEqual expectedValues simulation tolerance
         test |> should equal true
 
-       
-       
-       
-
-    let add(x : float, y : float) 
-        = x + y
-
-
+    let squared(x : float) 
+        = x**2.0
     [<Theory>]
     [<InlineData(1.0, 1.0)>]
     [<InlineData(5.0, 25)>]
     [<InlineData(-5.7, 32.49)>]
-    let ``test``(input : float * float) (expectedOutput : float) : unit =
-        add(input) |> should (equalWithin 1e-7) expectedOutput
-    
+    let ``test square``(input : float) (expectedOutput : float) : unit =
+        squared(input) |> should (equalWithin 1e-7) expectedOutput
