@@ -14,7 +14,6 @@ let evalccy (curr: Currency) : float =
     | EUR -> EURUSD
     | GBP -> GBPUSD
     | DKK -> DKKUSD
-    | _ -> failwith "Currency not found"
 
 /// <summary>
 /// Evaluates an observable value using a given function.
@@ -41,7 +40,7 @@ let rec evalo (E:(string*int)->float) (o : Obs) : float =
   | Max (c1, c2) ->
       let n1 = evalo E c1
       let n2 = evalo E c2
-      max (n1) (n2)
+      max n1 n2
 
 /// <summary>
 /// Evaluates a given contract.
