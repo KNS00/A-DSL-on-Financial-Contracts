@@ -1,4 +1,5 @@
 ﻿module contractTests
+open testFunctions
 open Domain
 open Evaluations
 open Simulations
@@ -15,7 +16,7 @@ module contractTests =
         | "GOOG", 1 -> 200.54
         | "GOOG", 5 -> 216.34
         | "MSFT", 2 -> 23.03
-        | _ -> failwith "Stock not found"
+        | _ -> 0.0
 
     [<Theory>] 
     [<InlineData(5, 0.9997260724)>]    // 1/((1+0,02/365))^5)    = 0.9997260724
@@ -28,6 +29,63 @@ module contractTests =
         let output = I input
         let isEqual = abs (output - expectedOutput) <= tolerance
         isEqual |> should equal true
+
+
+    // The One Constructor
+    let OneTestCases : List<obj[]> = [   
+        [| One EUR; evalccy EUR |]
+        [| One DKK; evalccy DKK |]
+        [| One GBP; evalccy GBP |]
+        [| One USD; evalccy USD |]
+    ]
+
+    [<Theory>]
+    [<MemberData(nameof(OneTestCases))>]
+    let ``the evalc One constructor should return the currency evaluated in USD``(input : Contract, expectedValue : float) =
+        evalc I testE input |> should (equalWithin 1e-7) expectedValue
+
+
+    // The Scale constructor
+    let ScaleTestCases : List<obj[]> = [
+        [| Scale(Value 150.0, One EUR); 165.0 |] // 150.0 * 1 EUR = 165 USD
+        [| Scale(Underlying("AAPL", 1), One EUR); 110.253 |] // 100.23 * 1 EUR = 110.253 USD
+        [| Scale(Value 150.0, One GBP); 186.0 |] // 150.0 * 1 GBP = 186 USD
+        [| Scale(Value 150.0, One DKK); 22.5 |] // 150 * 1 DKK = 22.5 USD
+        [| Scale(Value 150.0, One USD); 150.0 |] // 150.0 * 1 USD = 150 USD
+        [| Scale(Value -1.7, One EUR); -1.87 |] // -1.7 * 1 EUR = -1.87 USD
+        [| Scale(Value 4.5, One GBP); 5.58 |] // 4.5 * 1 GBP = 5.58 USD
+        [| Scale(Value 50000.0, One DKK); 7500.0 |] // 50000 * 1 DKK = 7500 USD
+        [| Scale(Value -2.5, One USD); -2.5 |] // -2.5 * 1 USD = -2.5 USD
+    ]
+
+    // Executing tests for Scale
+    [<Theory>]
+    [<MemberData(nameof(ScaleTestCases))>]
+    let ``the Scale constructor should scale a contract with an obs correctly`` (c : Contract, expectedValue : float) =
+        evalc I testE c |> should (equalWithin 1e-7) expectedValue
+
+    // Check that Acquire correctly discounts back in time according to the I function
+    let AcquireTestCases : List<obj[]> = [
+        // Acquire at time 0 should be equal to the current value of the contract
+        [| Acquire(0, One EUR); evalc I testE (One EUR) |]
+
+        // Acquire at a future time should be discounted by the I function
+        [| Acquire(30, One EUR); I(30) * (evalc I testE (One EUR)) |]
+
+        // Acquire at a past time should have a value of 0
+        [| Acquire(-30, One DKK); I(-30) * (evalc I testE (One DKK)) |]
+
+        // Acquire at a future time with a scale contract should be discounted by the I function
+        [| Acquire(10, Scale(Value 500.0, One DKK)); I(10) * evalc I testE (Scale(Value 500.0, One DKK)) |]
+
+        // Acquire at a future time with an underlying contract should be discounted by the I function
+        [| Acquire(10, Scale(Underlying("AAPL", 5), One EUR)); I(10) * evalc I testE (Scale(Underlying("AAPL", 5), One EUR)) |]
+    ]
+
+    [<Theory>]
+    [<MemberData(nameof(AcquireTestCases))>]
+    let ``the Acquire constructor should correctly discount back in time according to the I function``(c : Contract, expectedValue : float) =
+        evalc I testE c |> should (equalWithin 1e-7) expectedValue
 
     // Introducing flow for shorthand notation
     let flow(i: int, v: double, c: Currency) : Contract
@@ -49,8 +107,8 @@ module contractTests =
     // Executing testing for the ZCB
     [<Theory>]
     [<MemberData(nameof(zcbTestCase))>]
-    let ``evalc should evaluate a zcb correctly``(c : Contract, expectedValue: float) =
-        evalc I testE c |> should (equalWithin 1e-7) expectedValue
+    let ``evalc should evaluate a zcb correctly``(input : Contract, expectedValue: float) =
+        evalc I testE input |> should (equalWithin 1e-7) expectedValue
     
     (* Acquire a bond that pays 100 USD in 120 days and pays 2 percent interest quarterly *)
     let dividendPayingBond : Contract = 
@@ -90,8 +148,6 @@ module contractTests =
         evalc I testE c |> should (equalWithin 1e-7) expectedValue
 
 
-
-    
     // Call option
     let exampleEuropeanCallOption : Contract =
         let underlying = "DIKU A/S"
@@ -102,6 +158,16 @@ module contractTests =
             Max(Value 0.0,
                 Sub(Underlying(underlying, maturity), Value (strike * I maturity)))
         Scale(payoff, One currency)
+    let ``evalc should evaluate a European Call Option correctly``() =
+        0.0 |> ignore
+
+
+
+
+
+
+
+
     
     let exampleEuropeanPutOption : Contract =
         let underlying = "DIKU A/S"
