@@ -49,17 +49,15 @@ let stockPrices =
 /// <param name="stockName">The name of the stock.</param>
 /// <param name="time">The time at which to retrieve the price.</param>
 /// <returns>The price of the stock at the given time, if available; otherwise, None.</returns>
-let getPrice (stockName: string) (time: int) : float option =
-    let stock = stockData.Descendants(xn "stock").SingleOrDefault(fun s -> s.Element(xn "Name").Value = stockName)
-    match stock with
-    | null -> None
-    | _ -> 
-        let prices = stock.Descendants(xn "Price")
-                         |> Seq.filter (fun p -> int (p.Attribute(xn "index")).Value = time)
-                         |> Seq.toList
-        if List.isEmpty prices then None
-        else Some (float (List.head prices).Value)
-
+let getPrice (stockName: string) (time: int) : float =
+    match stockData.Descendants(xn "stock")
+                    .SingleOrDefault(fun s -> s.Element(xn "Name").Value = stockName) with
+    | null -> failwith "Stock not found"
+    | stock ->
+        match stock.Descendants(xn "Price")
+                    .SingleOrDefault(fun p -> int (p.Attribute(xn "index")).Value = time) with
+        | null -> failwith "Price not found"
+        | price -> float(price.Value)
 
 /// <summary>
 /// Updates the price data for a given stock at a given time.
@@ -99,7 +97,7 @@ let updateStockData (stockName: string) (time: int) (price: float) : unit =
 /// Retrieves the current price of a given stock symbol.
 /// </summary>
 /// <param name="symbol">The symbol of the stock to retrieve the price for.</param>
-/// <returns>A Result object containing the current price if successful, otherwise an error message.</returns>
+/// <returns>A Result object containing the stock name and current price if successful, otherwise an error message.</returns>
 let getCurrentStockPrice (symbol: string) : Result<float, string> =
     let stockData = XDocument.Load(XMLfilePath)
     match stockData.Descendants(XName.Get("stock")).SingleOrDefault(fun s -> s.Element(XName.Get("Name")).Value = symbol) with
