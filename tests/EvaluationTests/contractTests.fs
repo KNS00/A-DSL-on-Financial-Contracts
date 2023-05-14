@@ -6,7 +6,9 @@ open Simulations
 open Analysis
 open FsUnit
 open Xunit
-
+open FSharp.Stats
+open FSharp.Stats.Distributions
+open XMLFunctions
 module contractTests =
     let testE (s: string, t: int) = 
         match s, t with
@@ -127,7 +129,7 @@ module contractTests =
       payments
 
 
-    let dpbExpectedValue =
+    let dpbExpectedValue : float =
         let investment = 100.0
         let payment = 0.02 * investment
         payment * I(30)
@@ -148,18 +150,51 @@ module contractTests =
         evalc I testE c |> should (equalWithin 1e-7) expectedValue
 
 
-    // Call option
-    let exampleEuropeanCallOption : Contract =
+    // European Call Option example
+    let exampleEuropeanCallOption: Contract =
         let underlying = "DIKU A/S"
-        let strike = 100.0 
+        let strike = 100.0
         let maturity = 30
         let currency = USD
-        let payoff = 
-            Max(Value 0.0,
-                Sub(Underlying(underlying, maturity), Value (strike * I maturity)))
-        Scale(payoff, One currency)
-    let ``evalc should evaluate a European Call Option correctly``() =
-        0.0 |> ignore
+        let payoff =
+            Max(
+                Value 0.0,
+                Sub(Underlying(underlying, maturity), Value strike)
+            )
+        Acquire(maturity, Scale(payoff, One currency))
+
+
+
+    // Define the test case as an object list
+    let callTestCase: List<obj[]> =
+       // Calculate expected value of a European Call Option
+        let callOptionExpectedValue (S: float) (X: float) (r: float) (tdays: float) (sigma: float) =
+            let normal = ContinuousDistribution.normal 0.0 1.0
+            let T = tdays / 365.0
+            let d1 = (log(S / X) + (r + sigma ** 2. / 2.) * T) / (sigma * sqrt(T))
+            let d2 = d1 - sigma * sqrt(T)
+            S * normal.CDF(d1) - X * exp(-r * T) * normal.CDF(d2)
+        
+        let stockPrice : float = getPrice "DIKU A/S" 0
+        let strikePrice = 100.0
+        let riskFreeRate = 0.02
+        let timeToExpirationDays = 30.0
+        let mu = 0.01
+        let volatility = 0.2
+        //let value = I(getMaturityDate(exampleEuropeanCallOption)) * (max (stockPrice *exp(0.01 * 30.0 / 365.) - strikePrice) 0.0)
+        let blackScholes = callOptionExpectedValue stockPrice strikePrice riskFreeRate (float(getMaturityDate(exampleEuropeanCallOption))) volatility
+        [
+            [| exampleEuropeanCallOption; blackScholes |]
+        ]
+
+    [<Theory>]
+    [<MemberData(nameof(callTestCase))>]
+    let ``evalc should evaluate a European Call Option correctly``(input: Contract) (expectedOutput: float) =
+        let simulation = simulateContract input
+//        printfn "%A" simulation
+        //simulateContract input |> should (equalWithin 1e-2) expectedOutput
+        simulation |> should (equalWithin 1e-2) expectedOutput
+
 
 
 
