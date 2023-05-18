@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <stock>
   <Name>DIKU A/S</Name>
-  <Drift>0.01</Drift>
+  <Drift>0.001</Drift>
   <Volatility>0.02</Volatility>
   <Prices>
     <Price index="0">130.0</Price>
