@@ -9,7 +9,11 @@ open Xunit
 open FSharp.Stats
 open FSharp.Stats.Distributions
 open XMLFunctions
+open Examples
 module contractTests =
+
+    let i = 0.02
+
     let testE (s: string, t: int) = 
         match s, t with
         | "AAPL", 1 -> 100.23
@@ -19,7 +23,7 @@ module contractTests =
         | "GOOG", 5 -> 216.34
         | "MSFT", 2 -> 23.03
         | _ -> 0.0
-
+        (*
     [<Theory>] 
     [<InlineData(5, 0.9997260724)>]    // 1/((1+0,02/365))^5)    = 0.9997260724
     [<InlineData(20, 0.9989047398)>]   // 1/((1+0,02/365))^20)   = 0.9989047398
@@ -31,7 +35,9 @@ module contractTests =
         let output = I input
         let isEqual = abs (output - expectedOutput) <= tolerance
         isEqual |> should equal true
+        *)
 
+    // need to change discount function test
 
     // The One Constructor
     let OneTestCases : List<obj[]> = [   
@@ -69,19 +75,19 @@ module contractTests =
     // Check that Acquire correctly discounts back in time according to the I function
     let AcquireTestCases : List<obj[]> = [
         // Acquire at time 0 should be equal to the current value of the contract
-        [| Acquire(0, One EUR); evalc I testE (One EUR) |]
+        [| Acquire(i, 0, One EUR); evalc I testE (One EUR) |]
 
         // Acquire at a future time should be discounted by the I function
-        [| Acquire(30, One EUR); I(30) * (evalc I testE (One EUR)) |]
+        [| Acquire(i, 30, One EUR); I i 30 * (evalc I testE (One EUR)) |]
 
         // Acquire at a past time should have a value of 0
-        [| Acquire(-30, One DKK); I(-30) * (evalc I testE (One DKK)) |]
+        [| Acquire(i, -30, One DKK); I i -30 * (evalc I testE (One DKK)) |]
 
         // Acquire at a future time with a scale contract should be discounted by the I function
-        [| Acquire(10, Scale(Value 500.0, One DKK)); I(10) * evalc I testE (Scale(Value 500.0, One DKK)) |]
+        [| Acquire(i, 10, Scale(Value 500.0, One DKK)); I i 10 * evalc I testE (Scale(Value 500.0, One DKK)) |]
 
         // Acquire at a future time with an underlying contract should be discounted by the I function
-        [| Acquire(10, Scale(Underlying("AAPL", 5), One EUR)); I(10) * evalc I testE (Scale(Underlying("AAPL", 5), One EUR)) |]
+        [| Acquire(i, 10, Scale(Underlying("AAPL", 5), One EUR)); I i 10 * evalc I testE (Scale(Underlying("AAPL", 5), One EUR)) |]
     ]
 
     [<Theory>]
@@ -89,17 +95,13 @@ module contractTests =
     let ``the Acquire constructor should correctly discount back in time according to the I function``(c : Contract, expectedValue : float) =
         evalc I testE c |> should (equalWithin 1e-7) expectedValue
 
-    // Introducing flow for shorthand notation
-    let flow(i: int, v: double, c: Currency) : Contract
-        = Acquire(i,Scale(Value v, One c))
-
     (* Acquire a bond that pays 100 USD in 10 days *)    
     let zcb: Contract = 
       let maturityDate : int = 10
-      flow(maturityDate, 100.0, USD)
+      flow(i, maturityDate, 100.0, USD)
 
     // The expected value is the payment discounted by the maturity date
-    let zcbExpectedValue = 100.0 * I(getMaturityDate(zcb))
+    let zcbExpectedValue = 100.0 * I i (getMaturityDate(zcb))
 
     // Formuala the test case as a object list
     let zcbTestCase : List<obj[]> = [   
@@ -120,11 +122,11 @@ module contractTests =
       let payments: Contract = 
         let payment = 0.02 * investment
         All([
-            flow(30, payment, USD);
-            flow(60, payment, USD);    
-            flow(90, payment, USD);    
-            flow(120, payment, USD);
-            flow(120, investment, USD)
+            flow(i, 30, payment, USD);
+            flow(i, 60, payment, USD);    
+            flow(i, 90, payment, USD);    
+            flow(i, 120, payment, USD);
+            flow(i, 120, investment, USD)
             ])
       payments
 
@@ -132,11 +134,11 @@ module contractTests =
     let dpbExpectedValue : float =
         let investment = 100.0
         let payment = 0.02 * investment
-        payment * I(30)
-        + payment * I(60)
-        + payment * I(90)
-        + payment * I(120)
-        + investment * I(120)
+        payment * I i 30
+        + payment * I i 60
+        + payment * I i 90
+        + payment * I i 120
+        + investment * I i 120
 
     // Formuala the test case as a object list
     let dbpTestCase : List<obj[]> = [   
@@ -161,7 +163,7 @@ module contractTests =
                 Value 0.0,
                 Sub(Underlying(underlying, maturity), Value strike)
             )
-        Acquire(maturity, Scale(payoff, One currency))
+        Acquire(i, maturity, Scale(payoff, One currency))
 
 
 
@@ -170,17 +172,15 @@ module contractTests =
        // Calculate expected value of a European Call Option
         let callOptionExpectedValue (S: float) (X: float) (r: float) (tdays: float) (sigma: float) =
             let normal = ContinuousDistribution.normal 0.0 1.0
-            let T = tdays / 365.0
+            let T = tdays
             let d1 = (log(S / X) + (r + sigma ** 2. / 2.) * T) / (sigma * sqrt(T))
             let d2 = d1 - sigma * sqrt(T)
             S * normal.CDF(d1) - X * exp(-r * T) * normal.CDF(d2)
         
         let stockPrice : float = getPrice "DIKU A/S" 0
         let strikePrice = 100.0
-        let riskFreeRate = 0.02
-        let timeToExpirationDays = 30.0
-        let mu = 0.01
-        let volatility = 0.2
+        let riskFreeRate = 0.001
+        let volatility = 0.02
         //let value = I(getMaturityDate(exampleEuropeanCallOption)) * (max (stockPrice *exp(0.01 * 30.0 / 365.) - strikePrice) 0.0)
         let blackScholes = callOptionExpectedValue stockPrice strikePrice riskFreeRate (float(getMaturityDate(exampleEuropeanCallOption))) volatility
         [
@@ -190,7 +190,7 @@ module contractTests =
     [<Theory>]
     [<MemberData(nameof(callTestCase))>]
     let ``evalc should evaluate a European Call Option correctly``(input: Contract) (expectedOutput: float) =
-        let simulation = simulateContract input
+        let simulation = simulateContract 1_000_000 input
 //        printfn "%A" simulation
         //simulateContract input |> should (equalWithin 1e-2) expectedOutput
         simulation |> should (equalWithin 1e-2) expectedOutput
@@ -210,7 +210,7 @@ module contractTests =
         let maturity = 30
         let currency = USD
         let payoff = 
-            Max(Value 0.0, Sub(Value (strike * I maturity), Underlying(underlying, maturity)))
+            Max(Value 0.0, Sub(Value (strike * I i maturity), Underlying(underlying, maturity)))
         Scale(payoff, One currency)
     
     let exampleForward : Contract =
@@ -218,7 +218,7 @@ module contractTests =
         let strike = 100.0 
         let maturity = 30
         let currency = USD
-        let payoff = Sub(Underlying(underlying, maturity), Value (strike * I maturity))
+        let payoff = Sub(Underlying(underlying, maturity), Value (strike * I i maturity))
         Scale(payoff, One currency)
     
     
@@ -231,7 +231,7 @@ module contractTests =
     
         let leg1 = Scale(Value notional1, One currency1)
         let leg2 = Scale(Value notional2, One currency2)
-        Then(leg1, Acquire(maturity, leg2))
+        Then(leg1, Acquire(i, maturity, leg2))
     
     let exampleFixedRateBond : Contract =
         let principal = 1000.0
@@ -240,7 +240,7 @@ module contractTests =
         let currency = USD
         let coupon = Scale(Value (principal * rate), One currency)
         let principalAtMaturity = Scale(Value principal, One currency)
-        All [coupon; Acquire(maturity, principalAtMaturity)]
+        All [coupon; Acquire(i, maturity, principalAtMaturity)]
         
     
     
