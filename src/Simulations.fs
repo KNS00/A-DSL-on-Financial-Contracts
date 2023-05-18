@@ -11,15 +11,13 @@ open FSharp.Data
 open Domain
 
 
-
 /// <summary>
 /// Discounts the value 1 back in time according to the interest rate.
 /// </summary>
 /// <param name="i">The time period in days.</param>
 /// <returns>The value 1 discounted to the current time.</returns>
-let I (t : int) : float = 
-    let yearlyInterestRate : float = 0.02 // assume 0.02
-    let dailyInterestRate : float = yearlyInterestRate / 365.0
+let I (r : float) (t : int) : float =  
+    let dailyInterestRate : float = r / 365.0 // assume 0.02 for now
     let presentValue = 1.0/((1.0+dailyInterestRate)**float t)
     presentValue
 
