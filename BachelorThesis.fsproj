@@ -33,10 +33,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     
     <!-- Testing Libraries -->
-    <PackageReference Include="FsUnit" Version="5.2.0">
+    <PackageReference Include="FsUnit" Version="5.3.0">
       <GeneratePathProperty></GeneratePathProperty>
     </PackageReference>
-    <PackageReference Include="FsUnit.xUnit" Version="5.2.0">
+    <PackageReference Include="FsUnit.xUnit" Version="5.3.0">
       <GeneratePathProperty></GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
