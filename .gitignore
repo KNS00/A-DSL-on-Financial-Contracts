@@ -177,6 +177,9 @@ BundleArtifacts/
 Package.StoreAssociation.xml
 _pkginfo.txt
 
+# Mac files
+.DS_Store
+
 # Visual Studio cache files
 # files ending in .cache can be ignored
 *.[Cc]ache
