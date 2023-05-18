@@ -29,16 +29,31 @@ let dividendPayingBond : Contract =
         flow(i, 120, payment, USD)])
   Then(quarterlyPayments, flow(i, maturityDate, investment, USD))
 
-// Call option
-let exampleEuropeanCallOption : Contract =
-    let underlying = "DIKU A/S"
+
+(* Sell a loan with a principal of 100, where the buyer pays you 
+30 USD every quarter for a year.  *)
+let amortizedLoan = 
+    let principal = 100.0
+    let coupon = 30.0
+    All([Give(flow(i, 0, principal, USD));
+        flow(i, 91, coupon, USD);
+        flow(i, 182, coupon, USD);    
+        flow(i, 273, coupon, USD);    
+        flow(i, 364, coupon, USD)])    
+
+(* A contract that includes the acquisition of a European Call 
+Option with the underlying stock AAPL, a strike price of 100 
+dollars and maturity in 30 days. *)
+let EuropeanCallOption : Contract =
+    let underlying = "AAPL"
     let strike = 100.0 
     let maturity = 30
     let currency = USD
     let payoff = 
         Max(Value 0.0,
-            Sub(Underlying(underlying, maturity), Value (strike * I i maturity)))
-    Scale(payoff, One currency)
+            Sub(Underlying(underlying, maturity), 
+                Value (strike * I i maturity)))
+    Acquire(i, maturity, Scale(payoff, One currency))
 
 let exampleEuropeanPutOption : Contract =
     let underlying = "DIKU A/S"
