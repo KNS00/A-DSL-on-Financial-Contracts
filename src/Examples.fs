@@ -4,12 +4,15 @@ open Evaluations
 open Simulations
 open Analysis
 
-let flow(i: int, v: double, c: Currency) : Contract
-    = Acquire(i,Scale(Value v, One c))
+
+let i = 0.02
+
+let flow(i : float, t: int, v: double, c: Currency) : Contract
+    = Acquire(i, t, Scale(Value v, One c))
 
 let zcb1: Contract = 
   let maturityDate : int = 10
-  flow(maturityDate, 100.0, USD)
+  flow(i, maturityDate, 100.0, USD)
 
 
 let dividendPayingBond : Contract = 
@@ -20,11 +23,11 @@ let dividendPayingBond : Contract =
   let quarterlyPayments: Contract = 
     let payment = qPct * investment
     All([
-        flow(30, payment, USD);
-        flow(60, payment, USD);    
-        flow(90, payment, USD);    
-        flow(120, payment, USD)])
-  Then(quarterlyPayments, flow(maturityDate, investment, USD))
+        flow(i, 30, payment, USD);
+        flow(i, 60, payment, USD);    
+        flow(i, 90, payment, USD);    
+        flow(i, 120, payment, USD)])
+  Then(quarterlyPayments, flow(i, maturityDate, investment, USD))
 
 // Call option
 let exampleEuropeanCallOption : Contract =
@@ -34,7 +37,7 @@ let exampleEuropeanCallOption : Contract =
     let currency = USD
     let payoff = 
         Max(Value 0.0,
-            Sub(Underlying(underlying, maturity), Value (strike * I maturity)))
+            Sub(Underlying(underlying, maturity), Value (strike * I i maturity)))
     Scale(payoff, One currency)
 
 let exampleEuropeanPutOption : Contract =
@@ -43,7 +46,7 @@ let exampleEuropeanPutOption : Contract =
     let maturity = 30
     let currency = USD
     let payoff = 
-        Max(Value 0.0, Sub(Value (strike * I maturity), Underlying(underlying, maturity)))
+        Max(Value 0.0, Sub(Value (strike * I i maturity), Underlying(underlying, maturity)))
     Scale(payoff, One currency)
 
 let exampleForward : Contract =
@@ -51,7 +54,7 @@ let exampleForward : Contract =
     let strike = 100.0 
     let maturity = 30
     let currency = USD
-    let payoff = Sub(Underlying(underlying, maturity), Value (strike * I maturity))
+    let payoff = Sub(Underlying(underlying, maturity), Value (strike * I i maturity))
     Scale(payoff, One currency)
 
 
@@ -64,7 +67,7 @@ let exampleCurrencySwap : Contract =
 
     let leg1 = Scale(Value notional1, One currency1)
     let leg2 = Scale(Value notional2, One currency2)
-    Then(leg1, Acquire(maturity, leg2))
+    Then(leg1, Acquire(i, maturity, leg2))
 
 let exampleFixedRateBond : Contract =
     let principal = 1000.0
@@ -73,6 +76,6 @@ let exampleFixedRateBond : Contract =
     let currency = USD
     let coupon = Scale(Value (principal * rate), One currency)
     let principalAtMaturity = Scale(Value principal, One currency)
-    All [coupon; Acquire(maturity, principalAtMaturity)]
+    All [coupon; Acquire(i, maturity, principalAtMaturity)]
     
 

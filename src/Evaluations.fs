@@ -49,13 +49,13 @@ let rec evalo (E:(string*int)->float) (o : Obs) : float =
 /// <param name="E">The function used to evaluate stock prices.</param>
 /// <param name="c">The contract to evaluate.</param>
 /// <returns>The evaluated contract as a float.</returns>
-let rec evalc (I:int->float) (E:(string*int)->float) (c: Contract) : float =
+let rec evalc (I:float->int->float) (E:(string*int)->float) (c: Contract) : float =
   match c with
   | One c -> evalccy c // evaluate currency
   | Scale (obs, c1) -> evalo E obs * evalc I E c1 
   | All [] -> 0.0
   | All (c1::cs) -> evalc I E c1 + evalc I E (All cs)
-  | Acquire(t, c1) -> I t * evalc I E c1 
+  | Acquire(r, t, c1) -> I r t * evalc I E c1 
   | Or(c1, c2) -> evalc I E c1 + evalc I E c2 
   | Give(c1) -> -1.0 * evalc I E c1 
   | Then(c1, c2) -> if getMaturityDate(c1) > 0 then evalc I E c1 else evalc I E c2
