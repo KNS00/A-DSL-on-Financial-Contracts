@@ -48,12 +48,12 @@ let EuropeanCallOption : Contract =
     let underlying = "AAPL"
     let strike = 100.0 
     let maturity = 30
-    let currency = USD
+    let ccy = USD
     let payoff = 
         Max(Value 0.0,
             Sub(Underlying(underlying, maturity), 
                 Value (strike * I i maturity)))
-    Acquire(i, maturity, Scale(payoff, One currency))
+    Acquire(i, maturity, Scale(payoff, One ccy))
 
 let exampleEuropeanPutOption : Contract =
     let underlying = "DIKU A/S"
