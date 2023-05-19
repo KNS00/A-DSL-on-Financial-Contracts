@@ -13,14 +13,9 @@
     <Compile Include="src\XML.fs" />
     <Compile Include="src\Evaluations.fs" />
     <Compile Include="src\Simulations.fs" />
-    <Compile Include="src/Analysis.fs" />
+    <Compile Include="src\Analysis.fs" />
     <Compile Include="src\Examples.fs" />
-    <Compile Include="tests\testFunctions.fs" />
-    <Compile Include="tests\SimulationTests.fs" />
-    <Compile Include="tests\EvaluationTests\currencyTests.fs" />
-    <Compile Include="tests\EvaluationTests\contractTests.fs" />
-    <Compile Include="tests\EvaluationTests\obsTests.fs" />
-    <Compile Include="src/Program.fs" />
+    <Compile Include="src\Program.fs" />
   </ItemGroup>
 
   <!-- Package References -->
@@ -31,25 +26,7 @@
     <PackageReference Include="XPlot.Plotly" Version="4.0.6" />
     <PackageReference Include="FSharp.Data" Version="6.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    
-    <!-- Testing Libraries -->
-    <PackageReference Include="FsUnit" Version="5.3.0">
-      <GeneratePathProperty></GeneratePathProperty>
-    </PackageReference>
-    <PackageReference Include="FsUnit.xUnit" Version="5.3.0">
-      <GeneratePathProperty></GeneratePathProperty>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-      <GeneratePathProperty></GeneratePathProperty>
-    </PackageReference>
-    <PackageReference Include="xunit" Version="2.4.2">
-      <GeneratePathProperty></GeneratePathProperty>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0">
-      <GeneratePathProperty></GeneratePathProperty>
-    </PackageReference>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
     <PackageReference Include="FSharp.Core" Version="7.0.300">
       <GeneratePathProperty></GeneratePathProperty>
     </PackageReference>
