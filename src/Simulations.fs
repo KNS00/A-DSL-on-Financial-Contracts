@@ -9,7 +9,7 @@ open System.Runtime.Serialization.Formatters.Binary
 open System.Collections.Generic
 open FSharp.Data
 open Domain
-
+open Evaluations
 
 /// <summary>
 /// Discounts the value 1 back in time according to the interest rate.
@@ -28,10 +28,10 @@ let I (r : float) (t : int) : float =
 /// <param name="endTime">The end time of the Wiener Process.</param>
 /// <param name="dt">The time step for the Wiener Process.</param>
 /// <returns>A list of floats represent the Wiener Process.</returns>
-let WienerProcess(startTime : int, endTime : int, dt : float) : float list = 
-    let normalDistribution = ContinuousDistribution.normal 0.0 1.0
+let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
+    let normal = ContinuousDistribution.normal 0.0 1.0
     let numSteps = int(ceil((float(endTime) - float(startTime)) / dt))
-    let sampleValues = List.init numSteps (fun _ -> normalDistribution.Sample() * sqrt(dt))
+    let sampleValues = List.init numSteps (fun _ -> normal.Sample() * sqrt(dt))
     let results = List.scan (+) 0.0 sampleValues
     results
 
@@ -86,47 +86,26 @@ let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), fl
     data |> Map.ofList
 
 
+/// <summary>
+/// Runs a Monte Carlo simulation to estimate the expected value of a given contract.
+/// Uses the given options underlying stocks to generate stock price before simulation.
+/// </summary>
+/// <param name="c1">The contract to simulate.</param>
+/// <returns>The expected value of the option.</returns>
+let simulateContract (sims : int) (c : Contract) : float =
+    let underlyings : string list = getStocks(c)
+    let maturity = getMaturityDate(c)
+    let evaluations : float list =
+        [for _ in 1..sims ->
+            let resultMap = makeE underlyings maturity 1.0
+            let E(s,t) : float = Map.find(s, t) resultMap
+            let res = evalc I E c
+            //printfn "%A" res
+            res]
+    //printfn "%s %A" "evaluations" evaluations
+    //printfn "%s %A" "sum of evaluations" (List.sum evaluations)
+    evaluations |> List.average
 
-
-(*
-// Define the parameters
-let currentPrice = 100.0
-let startTime = 0
-let endTime = 10
-let dt = 1.0
-let mu = 1.0
-let sigmaValues = [| 0.2; 0.4; 0.6; 0.8; 1.0 |]
-
-// Generate the Wiener process values
-let wpValues = WienerProcess(startTime, endTime, dt)
-
-// Generate the GBM values for each sigma value
-let gbmValues = 
-    sigmaValues 
-    |> Array.map (fun sigma -> GeometricBrownianMotion(currentPrice, startTime, endTime, dt, mu, sigma, wpValues))
-
-// Create the plot traces
-let traces =
-    gbmValues
-    |> Array.mapi (fun i values -> 
-        Scatter(
-            x = [ float startTime .. dt  .. float endTime ],
-            y = values,
-            mode = "lines",
-            name = sprintf "GBM (sigma = %f)" sigmaValues.[i]
-        )
-    )
-
-// Create the plot
-let plot = Chart.Plot traces
-
-// Set plot options
-plot
-|> Chart.WithTitle "Geometric Brownian Motion"
-|> Chart.WithXTitle "Time"
-|> Chart.WithYTitle "Price"
-|> Chart.WithLegend true
-*)
 
 
 
