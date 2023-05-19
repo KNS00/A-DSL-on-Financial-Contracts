@@ -1,0 +1,4 @@
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/Tests/Tests/obj/Debug/net7.0/Tests.fsproj.AssemblyReference.cache
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/Tests/Tests/obj/Debug/net7.0/Tests.AssemblyInfoInputs.cache
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/Tests/Tests/obj/Debug/net7.0/Tests.AssemblyInfo.fs
+/Users/kasperschiller/Library/Mobile Documents/com~apple~CloudDocs/dev/Datalogi-økonomi/bachelor-thesis/Tests/Tests/obj/Debug/net7.0/Tests.fsproj.CoreCompileInputs.cache

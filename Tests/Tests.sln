@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1705.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests", "Tests\Tests.fsproj", "{9B64A828-0607-45EF-A22D-1F52117F0A99}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests", "Tests.fsproj", "{9B64A828-0607-45EF-A22D-1F52117F0A99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
