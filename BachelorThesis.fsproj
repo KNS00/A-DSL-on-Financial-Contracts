@@ -8,13 +8,14 @@
 
   <!-- Source Files -->
   <ItemGroup>
-    <None Include="src/stock_data.xml"></None>
+    <None Include="src\stock_data.xml"></None>
     <Compile Include="src\Domain.fs" />
     <Compile Include="src\XML.fs" />
     <Compile Include="src\Evaluations.fs" />
     <Compile Include="src\Simulations.fs" />
     <Compile Include="src\Analysis.fs" />
     <Compile Include="src\Examples.fs" />
+    <Compile Include="src\Plots.fs" />
     <Compile Include="src\Program.fs" />
   </ItemGroup>
 
