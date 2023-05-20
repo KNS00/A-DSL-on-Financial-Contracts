@@ -31,7 +31,7 @@ let I (r : float) (t : int) : float =
 /// <returns>A list of floats represent the Wiener Process.</returns>
 let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
     let normal = ContinuousDistribution.normal 0.0 1.0
-    let numSteps = int(ceil((float(endTime) - float(startTime)) / dt))
+    let numSteps = int(ceil((float endTime - float startTime) / dt))
     let sampleValues = List.init numSteps (fun _ -> normal.Sample() * sqrt(dt))
     let results = List.scan (+) 0.0 sampleValues
     results
@@ -58,13 +58,16 @@ let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : in
 /// <param name="stock">The stock to be simulated.
 /// <param name="t">The end time of the simulation.
 /// <param name="dt">The time increment.
-/// <returns>A tuple list containing the time and price of the stock.
+/// <returns>A tuple list containing the time (day) and price of the stock.
 let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
     let wpValues = WienerProcess(0, t, dt)
     let simulate (currentPrice: float)  (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = 
-        let dates : int list = [0 .. int dt .. t]
+        let dates : float list = [0.0 .. dt .. float t]
         let GBM : float list = GeometricBrownianMotion(currentPrice, 0, t, dt, mu, sigma, wpValues)
-        List.map2 (fun d p -> (d, p)) dates GBM
+        List.map2 (fun d p ->
+            let intD = int d
+            if d = float intD then Some (intD, p) else None) dates GBM // only put stock price on specific days into the list
+        |> List.choose id
     match XMLFunctions.getStockParameters stock with 
     | Some (S0, mu, sigma) -> simulate S0 mu sigma wpValues
     | None -> failwith "Stock was not found"
@@ -98,7 +101,7 @@ let simulateContract (sims : int) (c : Contract) : float =
     let maturity = getMaturityDate(c)
     let evaluations : float list =
         [for _ in 1..sims ->
-            let resultMap = makeE underlyings maturity 1.0
+            let resultMap = makeE underlyings maturity 0.01
             let E(s,t) : float = Map.find(s, t) resultMap
             let res = evalc I E c
             //printfn "%A" res
