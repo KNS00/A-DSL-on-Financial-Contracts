@@ -52,7 +52,7 @@ let EuropeanCallOption : Contract =
     let payoff = 
         Max(Value 0.0,
             Sub(Underlying(underlying, maturity), 
-                Value (strike * I i maturity)))
+                Value strike))
     Acquire(i, maturity, Scale(payoff, One ccy))
 
 let exampleEuropeanPutOption : Contract =
