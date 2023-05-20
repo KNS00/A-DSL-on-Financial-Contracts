@@ -17,8 +17,9 @@ open Evaluations
 /// <param name="i">The time period in days.</param>
 /// <returns>The value 1 discounted to the current time.</returns>
 let I (r : float) (t : int) : float =  
-    let dailyInterestRate : float = r / 365.0 // assume 0.02 for now
-    let presentValue = 1.0/((1.0+dailyInterestRate)**float t)
+    //let dailyInterestRate : float = r / 365.0 // assume 0.02 for now
+    //let presentValue = 1.0/((1.0+dailyInterestRate)**float t)
+    let presentValue : float = exp(-r * float t/365.0) // e^{-rt}
     presentValue
 
 /// <summary>
@@ -48,7 +49,7 @@ let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
 /// <returns>A list of floats that represent the Geometric Brownian Motion.</returns>
 let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma : float, wpValues : float list) : float list =
     let t : float list = [float startTime .. dt .. float endTime]
-    let output (i : int) = currentPrice * exp(((mu - 0.5 * (sigma**2.0)) * t.[i]) + sigma * wpValues.[i])
+    let output (i : int) = currentPrice * exp(((mu - 0.5 * (sigma**2.0)) * t.[i]/365.0) + sigma * wpValues.[i])
     List.mapi (fun i _ -> output i) t
 
 /// <summary>
