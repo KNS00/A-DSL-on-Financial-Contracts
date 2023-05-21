@@ -17,9 +17,8 @@ open Evaluations
 /// <param name="i">The time period in days.</param>
 /// <returns>The value 1 discounted to the current time.</returns>
 let I (r : float) (t : int) : float =  
-    //let dailyInterestRate : float = r / 365.0 // assume 0.02 for now
-    //let presentValue = 1.0/((1.0+dailyInterestRate)**float t)
-    let presentValue : float = exp(-r * float t) // e^{-rt}
+    let rDaily : float = exp(r / 252.0) - 1.0 // correct conversion from annual to daily rate
+    let presentValue : float = exp(-rDaily * float t) // e^{-rt}
     presentValue
 
 /// <summary>
@@ -49,8 +48,11 @@ let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
 /// <returns>A list of floats that represent the Geometric Brownian Motion.</returns>
 let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma : float, wpValues : float list) : float list =
     let t : float list = [float startTime .. dt .. float endTime]
-    let output (i : int) = currentPrice * exp((mu - 0.5 * (sigma**2.0)) * t.[i] + sigma * wpValues.[i])
+    let dailyVolatility = sigma / sqrt 252.
+    let dailyDrift = mu / 252.
+    let output (i : int) = currentPrice * exp((dailyDrift - 0.5 * (dailyVolatility**2.0)) * t.[i] + dailyVolatility * wpValues.[i]) // corrected time scaling in drift term
     List.mapi (fun i _ -> output i) t
+
 
 /// <summary>
 /// Simulates a stock from now until the given time based on the current price, drift and volatility found in a XML file.
