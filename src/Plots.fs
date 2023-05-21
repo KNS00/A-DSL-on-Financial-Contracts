@@ -86,20 +86,20 @@ let plotGBM() =
     let chart = Chart.Plot(plotGBM, layout)
     chart.Show()
 
-
 // plotting a European Call Option
 let plotEuropeanCall() =
     let startTime = 0
     let endTime = 10
     let dt = 0.01
     let currentPrice = 100.0
-    let drift = 0.01
-    let volatility = 0.05
-    let strike = 95.0
-    let interestRate = 0.05
-    
+    let drift = 0.02
+    let volatility = 0.03
+    let strike = 100.0
+    let interestRate = 0.02
+
+    let dates = [float startTime .. dt .. float endTime]
     let gbmValuesList =
-        [ for i in 0..9 ->
+        [ for i in 0..100 ->
             Random.SetSampleGenerator(Random.RandThreadSafe(i)) // new seed everytime so we get new GBM path
             let wpValues = WienerProcess(startTime, endTime, dt)
             let gbmValues = GeometricBrownianMotion(currentPrice, startTime, endTime, dt, drift, volatility, wpValues)
@@ -107,7 +107,7 @@ let plotEuropeanCall() =
 
     let callValuesList =
         [ for gbmValues in gbmValuesList -> // map I * payoff function to GBM
-            let callValues = List.map (fun value -> I interestRate endTime * max (value - strike) 0.0) gbmValues
+            let callValues = List.map2 (fun value date -> exp(-interestRate * date/365.0) * max (value - strike) 0.0) gbmValues dates
             callValues ]
 
     let averageCallValues =
@@ -116,11 +116,7 @@ let plotEuropeanCall() =
         |> List.map (fun sum -> sum / float (List.length callValuesList))
 
     let traces =
-        [ for i in 0..9 ->
-            let x = [ float startTime .. dt .. float endTime ]
-            let y = callValuesList.[i]
-            Scattergl(x = x, y = y, mode = "lines", line = Line(width = 1.0, color = "grey"), name = "Path " + string (i + 1)) ]
-        |> List.append [ Scattergl(x = [ float startTime .. dt .. float endTime ], y = averageCallValues, mode = "lines", line = Line(width = 2.0, color = "red"), name = "Average") ]
+        [ Scattergl(x = [ float startTime .. dt .. float endTime ], y = averageCallValues, mode = "lines", line = Line(width = 2.0, color = "red"), name = "Average") ]
 
     let layout =
         Layout(
@@ -136,25 +132,34 @@ let plotEuropeanCall() =
                 )
             ]
         )
-
     let chart = Chart.Plot(traces, layout)
     chart |> Chart.Show
 
+let blackScholes() =
+    // Black-Scholes Formula
+    let calculateBlackScholesCallPrice s0 x r t sigma =
+        let tradingDaysPerYear = 365.0
+        let daily_r = r /// tradingDaysPerYear
+        let daily_sigma = sigma /// sqrt(tradingDaysPerYear)
+        let t_days = t /// tradingDaysPerYear
 
+        let d1 = (log(s0 / x) + (daily_r + (daily_sigma**2.0) / 2.0) * t_days) / (daily_sigma * sqrt(t_days))
+        let d2 = d1 - daily_sigma * sqrt(t_days)
+        let normal = ContinuousDistribution.normal 0.0 1.0
+        let nd1 = normal.CDF(d1)
+        let nd2 = normal.CDF(d2)
+        let callPrice = s0 * nd1 - x * exp(-daily_r * t_days) * nd2
+        callPrice
 
+    let seed = 0
+    let rnd = new Random(seed)
 
+    let numSimulations = 1_000_000
+    let dt = 0.01
 
-(* A contract that includes the acquisition of a European Call 
-Option with the underlying stock AAPL, a strike price of 100 
-dollars and maturity in 30 days. *)
-let EuropeanCallOption (i : float) : Contract =
-    let underlying = "AAPL"
-    let strike = 100.0 
-    let maturity = 30
-    let ccy = USD
-    let payoff = 
-        Max(Value 0.0,
-            Sub(Underlying(underlying, maturity), 
-                Value (strike * I (float maturity - i) maturity)))
-    Acquire(float maturity - i, maturity, Scale(payoff, One ccy))
-
+    let T = float (getMaturityDate(EuropeanCallOption))
+    let S = getPrice "AAPL" 0
+    let r = 0.02
+    let sigma = 0.005
+    let K = 100.0
+    printfn "Black scholes calcuation %f" (calculateBlackScholesCallPrice S K r T sigma)
