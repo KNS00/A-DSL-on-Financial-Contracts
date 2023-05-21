@@ -6,12 +6,11 @@ open Simulations
 open FSharp.Data
 open XMLFunctions
 open Plots
+open Examples
 open FSharp.Stats
+open FSharp.Stats.Distributions
 open XPlot.Plotly
 open System
-open System.IO
-open System.CommandLine
-open System.CommandLine.Invocation
 
 let plotsDict = 
     dict [
@@ -22,6 +21,11 @@ let plotsDict =
 
 [<EntryPoint>]
 let main argv =
+    blackScholes()
+
+    let value = simulateContract 1_000 EuropeanCallOption
+    printfn "%s %A" "value of call DSL simulation" value
+
     let random = new Random()
     let mutable seed = random.Next()
     let parseSeed argv = // check if the user has given a seed as the first argument or not
@@ -31,9 +35,10 @@ let main argv =
 
     let (seed, args) = parseSeed (List.ofArray argv)
     printfn "Using seed %i." seed
-    Random.SetSampleGenerator(Random.RandThreadSafe(seed)) 
+    Random.SetSampleGenerator(Random.RandThreadSafe(seed))
 
-    args // iterate through the arguments given by the user
+    // iterate through the arguments given by the user
+    args 
     |> List.iter (fun arg ->
         match plotsDict.TryGetValue arg with
         | (true, func) -> 
