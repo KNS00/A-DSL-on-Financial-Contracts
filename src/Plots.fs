@@ -136,12 +136,11 @@ let plotEuropeanCall() =
     chart |> Chart.Show
 
 let blackScholes() =
-    // Black-Scholes Formula
     let calculateBlackScholesCallPrice s0 x r t sigma =
-        let tradingDaysPerYear = 365.0
-        let daily_r = r /// tradingDaysPerYear
-        let daily_sigma = sigma /// sqrt(tradingDaysPerYear)
-        let t_days = t /// tradingDaysPerYear
+        let tradingDaysPerYear = 252.
+        let daily_r = exp(r / tradingDaysPerYear) - 1.0
+        let daily_sigma = sigma / sqrt(tradingDaysPerYear)
+        let t_days = t // already in days
 
         let d1 = (log(s0 / x) + (daily_r + (daily_sigma**2.0) / 2.0) * t_days) / (daily_sigma * sqrt(t_days))
         let d2 = d1 - daily_sigma * sqrt(t_days)
@@ -162,4 +161,4 @@ let blackScholes() =
     let r = 0.02
     let sigma = 0.005
     let K = 100.0
-    printfn "Black scholes calcuation %f" (calculateBlackScholesCallPrice S K r T sigma)
+    printfn "Black scholes calculation %f" (calculateBlackScholesCallPrice S K r T sigma)
