@@ -19,7 +19,7 @@ open Evaluations
 let I (r : float) (t : int) : float =  
     //let dailyInterestRate : float = r / 365.0 // assume 0.02 for now
     //let presentValue = 1.0/((1.0+dailyInterestRate)**float t)
-    let presentValue : float = exp(-r * float t/365.0) // e^{-rt}
+    let presentValue : float = exp(-r * float t) // e^{-rt}
     presentValue
 
 /// <summary>
@@ -45,11 +45,11 @@ let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
 /// <param name="dt">The time step for the simulation.</param>
 /// <param name="mu">The drift parameter for the simulation.</param>
 /// <param name="sigma">The volatility parameter for the simulation.</param>
-/// <param name="wpValues">A list of floats that represent a Wiener Process.</param>
+/// <param name="wpValues">A list of floats that represent a simulated Wiener Process.</param>
 /// <returns>A list of floats that represent the Geometric Brownian Motion.</returns>
 let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma : float, wpValues : float list) : float list =
     let t : float list = [float startTime .. dt .. float endTime]
-    let output (i : int) = currentPrice * exp(((mu - 0.5 * (sigma**2.0)) * t.[i]/365.0) + sigma * wpValues.[i])
+    let output (i : int) = currentPrice * exp((mu - 0.5 * (sigma**2.0)) * t.[i] + sigma * wpValues.[i])
     List.mapi (fun i _ -> output i) t
 
 /// <summary>
