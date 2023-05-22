@@ -17,8 +17,8 @@ open Evaluations
 /// <param name="i">The time period in days.</param>
 /// <returns>The value 1 discounted to the current time.</returns>
 let I (r : float) (t : int) : float =  
-    let rDaily : float = exp(r / 252.0) - 1.0 // correct conversion from annual to daily rate
-    let presentValue : float = exp(-rDaily * float t) // e^{-rt}
+    //let rDaily : float = exp(r * float t / 365.0) - 1.0 // conversion from annual to daily rate
+    let presentValue : float = exp(-(r/365.) * float t) // e^{-rt}
     presentValue
 
 /// <summary>
@@ -48,8 +48,8 @@ let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
 /// <returns>A list of floats that represent the Geometric Brownian Motion.</returns>
 let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma : float, wpValues : float list) : float list =
     let t : float list = [float startTime .. dt .. float endTime]
-    let dailyVolatility = sigma / sqrt 252.
-    let dailyDrift = mu / 252.
+    let dailyVolatility = sigma / sqrt 365.
+    let dailyDrift = mu / 365.
     let output (i : int) = currentPrice * exp((dailyDrift - 0.5 * (dailyVolatility**2.0)) * t.[i] + dailyVolatility * wpValues.[i]) // corrected time scaling in drift term
     List.mapi (fun i _ -> output i) t
 
@@ -98,12 +98,13 @@ let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), fl
 /// </summary>
 /// <param name="c1">The contract to simulate.</param>
 /// <returns>The expected value of the option.</returns>
-let simulateContract (sims : int) (c : Contract) : float =
+let simulateContract (sims : int) (timeIncrement : float) (c : Contract) : float =
     let underlyings : string list = getStocks(c)
     let maturity = getMaturityDate(c)
     let evaluations : float list =
         [for _ in 1..sims ->
-            let resultMap = makeE underlyings maturity 0.01
+            let resultMap = makeE underlyings maturity
+                                  timeIncrement
             let E(s,t) : float = Map.find(s, t) resultMap
             let res = evalc I E c
             //printfn "%A" res

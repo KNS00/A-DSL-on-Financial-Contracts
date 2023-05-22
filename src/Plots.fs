@@ -53,14 +53,20 @@ let plotWienerProcess() =
 // plotting a Geometric Brownian Motion
 let plotGBM() =
     let startTime = 0
-    let endTime = 10
-    let dt = 0.01
+    let endTime = 365
+    let dt = 1./365.
     let currentPrice = 100.0
-    let drift = 0.01
-    let volatility = 0.05
+    let drift = 0.1
+    let volatility = 0.3
     let wpValues = WienerProcess(startTime, endTime, dt)
     let gbmValues = GeometricBrownianMotion(currentPrice, startTime, endTime, dt, drift, volatility, wpValues)
-    
+
+    let dt_string = 
+        match dt with
+        | x when x = 1./365. -> "1/365" // for the report
+        | _ -> sprintf "%.5g" dt
+    printfn "%A" dt_string
+
     let plotGBM = 
         Scatter(
             x = [float startTime .. dt .. float endTime],
@@ -74,7 +80,7 @@ let plotGBM() =
             title = "Geometric Brownian Motion",
             annotations = [
                 Annotation(
-                    text = sprintf "S₀: %.3g,\nStart Time: %i,\nEnd Time: %i,\nΔt: %.3g,\nμ: %.3g,\nσ: %.3g" currentPrice startTime endTime dt drift volatility,
+                    text = sprintf "S₀: %.3g,\nStart Time: %i days,\nEnd Time: %i days,\nΔt: %s,\nμ: %.3g,\nσ: %.3g" currentPrice startTime endTime dt_string drift volatility,
                     xref = "paper",
                     yref = "paper",
                     x = 0.5,
@@ -92,14 +98,21 @@ let plotEuropeanCall() =
     let endTime = 10
     let dt = 0.01
     let currentPrice = 100.0
-    let drift = 0.02
-    let volatility = 0.03
+    let drift = 0.1
+    let volatility = 0.3
     let strike = 100.0
     let interestRate = 0.02
+    let sims = 9
+
+    let dt_string = 
+        match dt with
+        | x when x = 1./365. -> "1/365" // for the report
+        | _ -> sprintf "%.5g" dt
 
     let dates = [float startTime .. dt .. float endTime]
     let gbmValuesList =
-        [ for i in 0..100 ->
+        [ for i in 0..sims ->
+            printfn "sim: %i" i
             Random.SetSampleGenerator(Random.RandThreadSafe(i)) // new seed everytime so we get new GBM path
             let wpValues = WienerProcess(startTime, endTime, dt)
             let gbmValues = GeometricBrownianMotion(currentPrice, startTime, endTime, dt, drift, volatility, wpValues)
@@ -116,14 +129,29 @@ let plotEuropeanCall() =
         |> List.map (fun sum -> sum / float (List.length callValuesList))
 
     let traces =
-        [ Scattergl(x = [ float startTime .. dt .. float endTime ], y = averageCallValues, mode = "lines", line = Line(width = 2.0, color = "red"), name = "Average") ]
+        let simulationTraces =
+            [ for i in 0..sims ->
+                let callValues =
+                    let I r t : float =  
+                        let rDaily : float = exp(r / 365.0) - 1.0 // correct conversion from annual to daily rate
+                        let presentValue : float = exp(-rDaily * t) // e^{-rt}
+                        presentValue
+                    List.map2
+                        (fun value date ->
+                            (I interestRate date) * max (value - strike) 0.0)
+                            (List.item i gbmValuesList) dates
+                Scattergl(x = [ float startTime .. dt .. float endTime ], y = callValues, mode = "lines", line = Line(width = 1.0, color = "grey"), name = sprintf "Path %i" i) ]
+    
+        let averageTrace = Scattergl(x = [ float startTime .. dt .. float endTime ], y = averageCallValues, mode = "lines", line = Line(width = 2.0, color = "red"), name = "Average")
+
+        simulationTraces @ [averageTrace]
 
     let layout =
         Layout(
             title = "European Call Option Valuation",
             annotations = [
                 Annotation(
-                    text = sprintf "S₀: %.3g,\nStart Time: %i,\nEnd Time: %i,\nΔt: %.3g,\nμ: %.3g,\nσ: %.3g,\nStrike: %.3g,\nInterest rate: %.3g%%" currentPrice startTime endTime dt drift volatility strike (interestRate * 100.0),
+                    text = sprintf "S₀: %.3g,\nStart Time: %i,\nEnd Time: %i,\nΔt: %s,\nμ: %.3g,\nσ: %.3g,\nStrike: %.3g,\nInterest rate: %.3g%%" currentPrice startTime endTime dt_string drift volatility strike (interestRate * 100.0),
                     xref = "paper",
                     yref = "paper",
                     x = 0.5,
@@ -131,14 +159,14 @@ let plotEuropeanCall() =
                     showarrow = false
                 )
             ]
-        )
+        )   
     let chart = Chart.Plot(traces, layout)
     chart |> Chart.Show
 
 let blackScholes() =
     let calculateBlackScholesCallPrice s0 x r t sigma =
-        let tradingDaysPerYear = 252.
-        let daily_r = exp(r / tradingDaysPerYear) - 1.0
+        let tradingDaysPerYear = 365.
+        let daily_r = r / 365.
         let daily_sigma = sigma / sqrt(tradingDaysPerYear)
         let t_days = t // already in days
 
@@ -151,14 +179,10 @@ let blackScholes() =
         callPrice
 
     let seed = 0
-    let rnd = new Random(seed)
 
-    let numSimulations = 1_000_000
-    let dt = 0.01
-
-    let T = float (getMaturityDate(EuropeanCallOption))
-    let S = getPrice "AAPL" 0
+    let T = float (getMaturityDate(EuropeanCallOption)) // 30
+    let S = getPrice "AAPL" 0 // 100
     let r = 0.02
-    let sigma = 0.005
+    let sigma = 0.05
     let K = 100.0
     printfn "Black scholes calculation %f" (calculateBlackScholesCallPrice S K r T sigma)

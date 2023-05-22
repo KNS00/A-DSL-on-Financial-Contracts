@@ -3,7 +3,7 @@
   <stock>
     <Name>AAPL</Name>
     <Drift>0.02</Drift>
-    <Volatility>0.005</Volatility>
+    <Volatility>0.05</Volatility>
     <Prices>
       <Price index="0">100.0</Price>
     </Prices>

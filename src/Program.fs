@@ -23,7 +23,7 @@ let plotsDict =
 let main argv =
     blackScholes()
 
-    let value = simulateContract 1_000 EuropeanCallOption
+    let value = simulateContract 100_000 0.01 EuropeanCallOption
     printfn "%s %A" "value of call DSL simulation" value
 
     let random = new Random()
