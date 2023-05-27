@@ -22,7 +22,7 @@ let evalccy (curr: Currency) : float =
 /// <param name="E">The function used to evaluate stock prices.</param>
 /// <param name="o">The observable to evaluate.</param>
 /// <returns>The evaluated observable value as a float.</returns>
-let rec evalo (E:(string*int)->float) (o : float) : float = 
+let rec evalo (E:(string*int)->float) (o : Obs) : float = 
     match o with
     | Value n -> n
     | Underlying (s, t) ->E(s,t)
