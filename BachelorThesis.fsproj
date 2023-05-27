@@ -11,6 +11,7 @@
     <None Include="src\stock_data.xml"></None>
     <Compile Include="src\Domain.fs" />
     <Compile Include="src\XML.fs" />
+    <Compile Include="src\Management.fs" />
     <Compile Include="src\Evaluations.fs" />
     <Compile Include="src\Simulations.fs" />
     <Compile Include="src\Analysis.fs" />
