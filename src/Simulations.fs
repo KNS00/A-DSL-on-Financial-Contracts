@@ -10,6 +10,7 @@ open System.Collections.Generic
 open FSharp.Data
 open Domain
 open Evaluations
+open Management
 
 /// <summary>
 /// Discounts the value 1 back in time according to the interest rate.
@@ -49,7 +50,7 @@ let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
 let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma : float, wpValues : float list) : float list =
     let t : float list = [float startTime .. dt .. float endTime]
     let dailyVolatility = sigma / sqrt 365.
-    let dailyDrift = mu / 365.
+    let dailyDrift = mu /365.
     let output (i : int) = currentPrice * exp((dailyDrift - 0.5 * (dailyVolatility**2.0)) * t.[i] + dailyVolatility * wpValues.[i]) // corrected time scaling in drift term
     List.mapi (fun i _ -> output i) t
 
@@ -85,9 +86,9 @@ let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
 let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), float> =
     let data =
         stocks
-        |> List.collect (fun (s : string) -> // Collect is the same as map but where we flatten the list afterwards.
+        |> List.collect (fun (s : string) ->
             let stockData = simStock s t dt
-            stockData |> List.map (fun (i : int, f : float) -> ((s, i), f)) 
+            stockData |> List.map (fun (i : int, f : float) -> ((s, i), f))
         )
     data |> Map.ofList
 
@@ -99,8 +100,8 @@ let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), fl
 /// <param name="c1">The contract to simulate.</param>
 /// <returns>The expected value of the option.</returns>
 let simulateContract (sims : int) (timeIncrement : float) (c : Contract) : float =
-    let underlyings : string list = getStocks(c)
-    let maturity = getMaturityDate(c)
+    let underlyings : string list = underlyings(c)
+    let maturity = maturity(c)
     let evaluations : float list =
         [for _ in 1..sims ->
             let resultMap = makeE underlyings maturity
@@ -112,7 +113,6 @@ let simulateContract (sims : int) (timeIncrement : float) (c : Contract) : float
     //printfn "%s %A" "evaluations" evaluations
     //printfn "%s %A" "sum of evaluations" (List.sum evaluations)
     evaluations |> List.average
-
 
 
 
