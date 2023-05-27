@@ -6,7 +6,7 @@ open Evaluations
 open Simulations
 open Analysis
 open Examples
-
+open Management
 
 // External modules
 open System
@@ -180,7 +180,7 @@ let blackScholes() =
 
     let seed = 0
 
-    let T = float (getMaturityDate(EuropeanCallOption)) // 30
+    let T = float (maturity(EuropeanCallOption)) // 30
     let S = getPrice "AAPL" 0 // 100
     let r = 0.02
     let sigma = 0.05
