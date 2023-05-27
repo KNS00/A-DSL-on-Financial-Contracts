@@ -7,6 +7,7 @@ open FSharp.Data
 open XMLFunctions
 open Plots
 open Examples
+open Management
 open FSharp.Stats
 open FSharp.Stats.Distributions
 open XPlot.Plotly
@@ -21,10 +22,12 @@ let plotsDict =
 
 [<EntryPoint>]
 let main argv =
-    blackScholes()
-
-    let value = simulateContract 100_000 0.01 EuropeanCallOption
-    printfn "%s %A" "value of call DSL simulation" value
+    printfn "start %A" contractio
+    printfn "flows %A" cflows
+    //printfn "more simple %A" moresimple
+    //blackScholes()
+    //let value = simulateContract 1_000 0.01 EuropeanCallOption
+    //printfn "%s %A" "value of call DSL simulation" value
 
     let random = new Random()
     let mutable seed = random.Next()
