@@ -25,7 +25,7 @@ let evalccy (curr: Currency) : float =
 let rec evalo (E:(string*int)->float) (o : Obs) : float = 
     match o with
     | Value n -> n
-    | Underlying (s, t) ->E(s,t)
+    | Underlying (s, t) -> E(s,t)
     | Mul (c1, c2) ->
         let n1 = evalo E c1
         let n2 = evalo E c2

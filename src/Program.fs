@@ -23,7 +23,7 @@ let plotsDict =
 [<EntryPoint>]
 let main argv =
     printfn "start %A" contractio
-    printfn "flows %A" cflows
+    printfn "after %A" cflows
     //printfn "more simple %A" moresimple
     //blackScholes()
     //let value = simulateContract 1_000 0.01 EuropeanCallOption
