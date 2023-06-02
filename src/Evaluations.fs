@@ -25,7 +25,9 @@ let evalccy (curr: Currency) : float =
 let rec evalo (E:(string*int)->float) (o : Obs) : float = 
     match o with
     | Value n -> n
-    | Underlying (s, t) -> E(s,t)
+    | Underlying (s, t) ->
+        try E(s,t)
+        with _ -> failwith ("Price of " + s + " at time " + string t + " was not found in the environment")
     | Mul (c1, c2) ->
         let n1 = evalo E c1 
         let n2 = evalo E c2 
