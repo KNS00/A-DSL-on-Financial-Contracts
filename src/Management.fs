@@ -24,7 +24,7 @@ let rec getStocksAsObs (c: Contract) : Obs list =
         let stocks_in_c = getStocksAsObs c'
         List.append obsList stocks_in_c |> List.distinct
     | All cs -> List.map getStocksAsObs cs |> List.concat |> List.distinct
-    | Acquire (_, _, c') -> getStocksAsObs c'
+    | Acquire (_, c') -> getStocksAsObs c'
     | Give c' -> getStocksAsObs c'
     | Or (c1, c2) ->
         let stocks_in_c1 = getStocksAsObs c1
@@ -35,102 +35,62 @@ let rec getStocksAsObs (c: Contract) : Obs list =
         let stocks_in_c2 = getStocksAsObs c2
         List.append stocks_in_c1 stocks_in_c2 |> List.distinct
 
-(*
-/// <summary>
-/// Finds the name and date of an underlying.
-/// </summary>
-/// <param name="obs">The underlying to retrieve the name and date of..</param>
-/// <returns>The underlying stock as a observable.</returns>
-let getUnderlyingInfo(o : Obs) : string * int =
-    match o with
-    | Underlying (name, t) -> (name, obsMaturity o)
-    | _ -> failwith "not an underlying"
-    *)
-let rec evaloo (E: (string * int) -> float) (o : Obs) : float =
-    match o with
-    | Value n -> n
-    | Underlying (s, t) -> E(s,t)
-    | Mul (c1, c2) ->
-        let n1 = evaloo E c1
-        let n2 = evaloo E c2
-        n1 * n2
-    | Add (c1, c2) ->
-        let n1 = evaloo E c1
-        let n2 = evaloo E c2
-        n1 + n2
-    | Sub (c1, c2) ->
-        let n1 = evaloo E c1
-        let n2 = evaloo E c2
-        n1 - n2
-    | Max (c1, c2) ->
-        let n1 = evaloo E c1
-        let n2 = evaloo E c2
-        max n1 n2
-
 
 /// <summary>
-/// Retrieves a list of stocks used in a given contract.
+/// Retrieves a list of underlyings used in a given observable.
 /// </summary>
-/// <param name="c">The contract to retrieve the list of stocks for.</param>
-/// <returns>The names of stocks used in the contract as a list of strings.</returns>
-let rec underlyings (c: Contract) : string list =
-    match c with
-    | One _ -> []
-    | Scale (obs, c') ->
-        let stocks_in_obs = underlyingsObs obs
-        let stocks_in_c = underlyings c'
-        List.append stocks_in_obs stocks_in_c |> List.distinct |> List.sort
-    | All cs -> List.map underlyings cs |> List.concat |> List.distinct |> List.sort
-    | Acquire (_, _, c') -> underlyings c'
-    | Give c' -> underlyings c'
-    | Or (c1, c2) ->
-        let stocks_in_c1 = underlyings c1
-        let stocks_in_c2 = underlyings c2
-        List.append stocks_in_c1 stocks_in_c2 |> List.distinct |> List.sort
-    | Then (c1, c2) ->
-        let stocks_in_c1 = underlyings c1
-        let stocks_in_c2 = underlyings c2
-        List.append stocks_in_c1 stocks_in_c2 |> List.distinct |> List.sort
-
-/// <summary>
-/// Retrieves a list of stocks used in a given observable value.
-/// </summary>
-/// <param name="obs">The observable value to retrieve the list of stocks for.</param>
-/// <returns>The names of stocks used in the observable as a list of strings.</returns>
-and underlyingsObs (obs: Obs) : string list =
+/// <param name="obs">The observable to retrieve the list of underlyings for.</param>
+/// <param name="timeOffset">The time offset to apply to the underlyings.</param>
+/// <returns>The names of underlyings used in the observable as a list of tuples (string * int), where the int represents the time.</returns>
+let rec underlyingsObs (obs: Obs) (t: int) : (string * int) list =
     match obs with
     | Value _ -> []
-    | Underlying (stock_name, _) -> [stock_name]
-    | Mul (obs1, obs2) ->
-        let stocks_in_obs1 = underlyingsObs obs1
-        let stocks_in_obs2 = underlyingsObs obs2
-        List.append stocks_in_obs1 stocks_in_obs2 |> List.distinct |> List.sort
-    | Add (obs1, obs2) ->
-        let stocks_in_obs1 = underlyingsObs obs1
-        let stocks_in_obs2 = underlyingsObs obs2
-        List.append stocks_in_obs1 stocks_in_obs2 |> List.distinct |> List.sort
-    | Sub (obs1, obs2) ->
-        let stocks_in_obs1 = underlyingsObs obs1
-        let stocks_in_obs2 = underlyingsObs obs2
-        List.append stocks_in_obs1 stocks_in_obs2 |> List.distinct |> List.sort
-    | Max (obs1, obs2) ->
-        let stocks_in_obs1 = underlyingsObs obs1
-        let stocks_in_obs2 = underlyingsObs obs2
-        List.append stocks_in_obs1 stocks_in_obs2 |> List.distinct |> List.sort
+    | Underlying (stock_name, time) -> [(stock_name, time + t)]
+    | Mul (obs1, obs2) | Add (obs1, obs2) | Sub (obs1, obs2) | Max (obs1, obs2) -> 
+        let stocks_in_obs1 = underlyingsObs obs1 t
+        let stocks_in_obs2 = underlyingsObs obs2 t
+        List.append stocks_in_obs1 stocks_in_obs2 
+
+/// <summary>
+/// Retrieves a list of underlyings used in a given contract.
+/// </summary>
+/// <param name="c">The contract to retrieve the list of underlyings for.</param>
+/// <param name="timeOffset">The time offset to apply to the underlyings.</param>
+/// <returns>The names of underlyings used in the contract as a list of tuples (string * int), where the int represents the time.</returns>
+let underlyings (c: Contract) : (string * int) list =
+    let rec u (t : int) (c : Contract) : (string * int) list =
+        match c with
+        | One _ -> []
+        | Scale (obs, c') ->
+            let stocks_in_obs = underlyingsObs obs t
+            let stocks_in_c = u t c'
+            List.append stocks_in_obs stocks_in_c 
+        | All cs -> List.concat (List.map (fun x -> u t c) cs) 
+        | Acquire (days, c') -> u (t + days) c'
+        | Give c' -> u t c'
+        | Or (c1, c2) ->
+            let stocks_in_c1 = u t c1
+            let stocks_in_c2 = u t c2
+            List.append stocks_in_c1 stocks_in_c2 
+        | Then (c1, c2) ->
+            let stocks_in_c1 = u t c1
+            let stocks_in_c2 = u t c2
+            List.append stocks_in_c1 stocks_in_c2 
+    u 0 c |> List.distinct 
+
+
 
 /// <summary>
 /// Finds the date of an underlying.
 /// </summary>
 /// <param name="c">The contract to calculate the maturity date for.</param>
 /// <returns> The date of the underlying. </returns>
-let rec obsMaturity (o : Obs) : int =
+let rec obsMaturity (i : int) (o : Obs) : int =
     match o with
     | Value _ -> 0
-    | Underlying (_, t) -> t
-    | Mul (o1, o2) -> max (obsMaturity o1) (obsMaturity o2)
-    | Add (o1, o2) -> max (obsMaturity o1) (obsMaturity o2)
-    | Sub (o1, o2) -> max (obsMaturity o1) (obsMaturity o2)
-    | Max (o1, o2) -> max (obsMaturity o1) (obsMaturity o2)
+    | Underlying (_, t) -> t+i
+    | Mul(o1, o2) | Add (o1, o2) | Sub (o1, o2) | Max(o1, o2) ->
+        max (obsMaturity i o1) (obsMaturity i o2)
 
 
 /// <summary>
@@ -138,16 +98,18 @@ let rec obsMaturity (o : Obs) : int =
 /// </summary>
 /// <param name="c">The contract to calculate the maturity date for.</param>
 /// <returns>The maturity date of the contract.</returns>
-let rec maturity (c : Contract) : int =
-    match c with
-    | One _ -> 0
-    | Scale (obs, c1) -> max (obsMaturity obs) (maturity c1)
-    | All [] -> 0
-    | All (c1::cs) -> max (maturity c1) (maturity (All cs))
-    | Acquire (_, t, c1) -> max t (maturity c1)
-    | Or (c1, c2) -> max (maturity c1) (maturity c2)
-    | Give c1 -> maturity c1
-    | Then (c1, c2) -> max (maturity c1) (maturity c2)
+let maturity (c : Contract) : int =
+    let rec m (i : int) (c : Contract) : int =
+        match c with
+        | One _ -> i
+        | Scale (obs, c1) -> max (obsMaturity i obs) (m i c1)
+        | All [] -> i
+        | All (c::cs) -> max (m i c) (m i (All cs))
+        | Acquire (t, c1) -> m (t+i) c1
+        | Or (c1, c2) -> max (m i c1) (m i c2)
+        | Give c1 -> m i c1
+        | Then (c1, c2) -> (m i c1) + (m i c2)
+    m 0 c
 
 
 let rec certainObs (o : Obs) : bool =
@@ -184,8 +146,8 @@ let rec uncertainFlows (c : Contract) : Contract list =
         | false -> uncertainFlows subContract
     | All contracts ->
         List.concat (List.map uncertainFlows contracts)
-    | Acquire (_, _, Scale(Underlying _, _)) -> c :: uncertainFlows c
-    | Acquire (_, _, Give(Scale(Underlying _, _))) -> c :: uncertainFlows c
+    | Acquire (_, Scale(Underlying _, _)) -> c :: uncertainFlows c
+    | Acquire (_, Give(Scale(Underlying _, _))) -> c :: uncertainFlows c
     | Acquire _ -> []
     | Give subContract ->
         uncertainFlows subContract
@@ -207,9 +169,9 @@ let rec certainFlows (c : Contract) : Contract list =
                 failwith "Contract is not simplified: We have a Scale(obs, certain c). That should just be c, since c is certain."
         | false -> [] 
     | All contracts -> List.concat (List.map certainFlows contracts)
-    | Acquire (_, _, Scale(Underlying _, _)) -> []
-    | Acquire (_, _, Give(Scale(Underlying _, _))) -> []
-    | Acquire (_, _, cc) -> c :: certainFlows cc
+    | Acquire (_, Scale(Underlying _, _)) -> []
+    | Acquire (_, Give(Scale(Underlying _, _))) -> []
+    | Acquire (_, cc) -> c :: certainFlows cc
     | Give subContract ->
         certainFlows subContract
     | Or (c1, c2) ->
@@ -229,39 +191,57 @@ let rec missingInformation(c : Contract) : Obs List =
                 missingInformation c
         | _ -> missingInformation c
     | All cs -> List.concat (List.map missingInformation cs)
-    | Acquire (_, _, Scale(Underlying(obs, d), _)) | Acquire (_, _, Give(Scale(Underlying(obs, d), _))) ->
-        if d <= 0 then
-            [Underlying(obs, d)]
+    | Acquire (t, Scale(Underlying(obs, d), _)) | Acquire (t, Give(Scale(Underlying(obs, d), _))) ->
+        if t+d <= 0 then
+            [Underlying(obs, t+d)]
         else
             []
-    | Acquire(_, _, c) -> missingInformation c
+    | Acquire(_, c) -> missingInformation c
     | Give c -> missingInformation c
     | Or (c1, c2) -> missingInformation c1 @ missingInformation c2
     | Then(c1, c2) -> missingInformation c1 @ missingInformation c2
 
 
 let rec simplifyObs (E: (string * int) -> float) (o : Obs) : Obs =
-  let simpl opr o1 o2 : Obs = 
-    opr(simplifyObs E o1,simplifyObs E o2)
-  try Value(evaloo E o)
-  with _ ->
-    match o with
+  let simpl f opr o1 o2 : Obs =
+    match (simplifyObs E o1,simplifyObs E o2) with
+    | (Value r1, Value r2) -> Value(f r1 r2)
+    | (o1, o2) -> opr(o1, o2)
+  match o with
     | Value _ -> o
     | Underlying(s,t) ->
         try Value(E(s,t))
         with _ -> Underlying(s,t)
- (*       if (t <= 0) then
-            try
-                Value(E(s,t))
-            with _ ->
-                Underlying(s,t)
-        else
-            Underlying(s,t)*)
-    | Mul (o1, o2) -> simpl Mul (simplifyObs E o1) (simplifyObs E o2)
-    | Add (o1, o2) -> simpl Add (simplifyObs E o1) (simplifyObs E o2)
-    | Sub (o1, o2) -> simpl Sub (simplifyObs E o1) (simplifyObs E o2)
-    | Max (o1, o2) -> simpl Max (simplifyObs E o1) (simplifyObs E o2)
+    | Mul (o1, o2) -> simpl (fun x y -> x*y) Mul o1 o2 
+    | Add (o1, o2) -> simpl (fun x y -> x+y) Add o1 o2 
+    | Sub (o1, o2) -> simpl (fun x y -> x-y) Sub o1 o2 
+    | Max (o1, o2) -> simpl max Max o1 o2 
 
+type flow =
+    | Uncertain
+    | Certain of double * Currency
+    | Choose of (int * flow) List * (int * flow) List
+
+let flows (c : Contract) : (int * flow) List =
+    let rec fl (t : int) (s : float Option) (c : Contract) : (int * flow) List =
+        match c with
+        | One ccy ->
+            match s with
+            | None -> [(t, Uncertain)]
+            | Some s -> [(t, Certain(s, ccy))]
+        | Scale(Value d,c) ->
+            match s with 
+            | None -> fl t None c
+            | Some s -> fl t (Some (s*d)) c
+        | Scale(_, c) -> fl t None c
+        | Acquire(t', c) -> fl(t + t') s c
+        | Give(c) ->
+            match s with
+            | None -> fl t None c
+            | Some s -> fl t (Some (-s)) c
+        | All cs -> List.concat (List.map (fl t s) cs)
+        | Or(c1, c2) -> [(t, Choose((fl t s c1), fl t s c2))]
+    fl 0 (Some 1.0) c
 
 
 
@@ -274,11 +254,11 @@ let rec simplify (E: (string * int) -> float) (c: Contract) : Contract =
         | [c] -> c
         | cs -> All cs
     | One _ -> c
-    | Acquire(i, t, c) ->
+    | Acquire(t, c) ->
         if t <= 0 then
             simplify E c
         else
-            Acquire(i, t, (simplify E c))
+            Acquire(t, (simplify E c))
     | Scale(k, c) ->
         match Scale(simplifyObs E k, simplify E c) with
         | Scale(k, Scale(kk, c1)) ->
@@ -302,25 +282,49 @@ let rec simplify (E: (string * int) -> float) (c: Contract) : Contract =
 
 let adv (E : (string * int) -> float) (c : Contract) (d : int) : Contract =
     let rec advance (E : (string * int) -> float) (c : Contract) (d : int) : Contract =
-        let rec subtractDate d obs =
-            match obs with
-            | Value _ -> obs
-            | Underlying (symbol, t) -> Underlying (symbol, t - d)
-            | Mul (o1, o2) -> Mul (subtractDate d o1, subtractDate d o2)
-            | Add (o1, o2) -> Add (subtractDate d o1, subtractDate d o2)
-            | Sub (o1, o2) -> Sub (subtractDate d o1, subtractDate d o2)
-            | Max (o1, o2) -> Max (subtractDate d o1, subtractDate d o2)
         match c with
         | One _ -> c
-        | Scale(o,c) ->
-            match o with
-            | _ -> Scale(subtractDate d o, advance E c d)
+        | Scale(o,c) -> Scale(o, advance E c d)
         | All(cs) -> All(List.map (fun c -> advance E c d) cs)
-        | Acquire(i, t, c) -> Acquire(i, t-d, advance E c d)
+        | Acquire(t, c) -> Acquire(t-d, advance E c d)
         | Give(c) -> advance E c d
-        | Then(c1, c2) -> Then(advance E c1 d, advance E c2 d)
         | Or(c1, c2) -> Or(advance E c1 d, advance E c2 d)
     simplify E (advance E c d)
+    (*
+
+
+
+
+//let causal (c: Contract) : (int * string) List =
+let causal (c : Contract) : (int * flow) List =
+    let rec cs (t : int) (s : float Option) (c : Contract) : (int * flow) List =
+        match c with
+        | One ccy ->
+            match s with
+            | None -> [(t, Causal)]
+            | Some s -> [(t, Causal(s, ccy))]
+        | Scale(Value d,c) ->
+            match s with 
+            | None -> fl t None c
+            | Some s -> fl t (Some (s*d)) c
+        | Scale(_, c) -> fl t None c
+        | Acquire(t', c) -> fl(t + t') s c
+        | Give(c) ->
+            match s with
+            | None -> fl t None c
+            | Some s -> fl t (Some (-s)) c
+        | All cs -> List.concat (List.map (fl t s) cs)
+        | Or(c1, c2) -> failwith "to do "
+    fl 0 (Some 1.0) c
+    
+    *)
+
+
+let Then(c1 : Contract, c2 : Contract) : Contract = // acquire c2 as c1 expires.
+    All[
+        c1;
+        Acquire(maturity(c1), c2)
+    ]
 
 
 let dummyE : (string * int) -> float =
@@ -353,17 +357,3 @@ let dummyE : (string * int) -> float =
 
    
     
-let contractio =
-    All [
-        //One DKK;
-        //One DKK;
-        //Scale(Value 100.0, One USD);
-        //Acquire(0.02, 10, Scale(Underlying("AAPL", -3), One USD));
-        Acquire(0.02, -3, Give(Scale(Underlying("AAPL", -3), One USD)))
-        //Give(Give(One DKK))
-        //Scale(Value 100.0, Acquire(0.02, 10, Scale(Value 100.0, One USD)));
-        //Acquire(0.02, 10, Give(Scale(Value 100.0, One USD)));
-        //Acquire(0.02, 10, Give(Scale(Underlying("AAPL", -3), One USD)))
-    ]
-
-let cflows = simplify dummyE (contractio)
