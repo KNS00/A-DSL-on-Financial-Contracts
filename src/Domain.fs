@@ -22,8 +22,8 @@ type Obs =
 type Contract = // All these constructers are used to define a contract. 
   | One of Currency
   | Scale of Obs * Contract 
-  | All of Contract list
-  | Acquire of float * int * Contract // Acquire contract int days from now assuming a constant interest rate
+  | All of Contract List
+  | Acquire of int * Contract // Acquire contract int days from now assuming a constant interest rate
   | Give of Contract 
   | Or of Contract * Contract
   | Then of Contract * Contract // Then(c1, c2) means you acquire c1 if it has not expired; else c2.
