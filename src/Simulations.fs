@@ -11,48 +11,68 @@ open FSharp.Data
 open Domain
 open Evaluations
 open Management
+open Examples
+
+let normal = ContinuousDistribution.normal 0.0 1.0
 
 /// <summary>
 /// Discounts the value 1 back in time according to the interest rate.
 /// </summary>
 /// <param name="i">The time period in days.</param>
 /// <returns>The value 1 discounted to the current time.</returns>
-let I (r : float) (t : int) : float =  
+let I (t : int) : float =  
     //let rDaily : float = exp(r * float t / 365.0) - 1.0 // conversion from annual to daily rate
-    let presentValue : float = exp(-(r/365.) * float t) // e^{-rt}
+    let r = 0.02
+    let presentValue : float = exp(-r/365. * (float t)) // e^{-rt}
     presentValue
 
 /// <summary>
 /// Generates a Wiener Process of normally distributed random numbers.
 /// </summary>
-/// <param name="startTime">The start time of the Wiener Process.</param>
-/// <param name="endTime">The end time of the Wiener Process.</param>
+/// <param name="T">The end time of the Wiener Process.</param>
 /// <param name="dt">The time step for the Wiener Process.</param>
 /// <returns>A list of floats represent the Wiener Process.</returns>
-let WienerProcess(startTime : int, endTime : int, dt : float) : float list =
-    let normal = ContinuousDistribution.normal 0.0 1.0
-    let numSteps = int(ceil((float endTime - float startTime) / dt))
+let WienerProcess(T : int) (dt : float) : float list =
+    let numSteps = int(ceil((float T) / dt))
     let sampleValues = List.init numSteps (fun _ -> normal.Sample() * sqrt(dt))
-    let results = List.scan (+) 0.0 sampleValues
+    let results = List.scan (+) 0.0 sampleValues // fix : only prior value should be added
     results
+
+
+let GBM (initialPrice : float) (T : int) (mu : float) (sigma : float) : float =
+    let Td = float T/365.
+    let normal = ContinuousDistribution.normal 0.0 1.0
+    let drift = (mu - 0.5 * (sigma ** 2.0)) * float Td
+    let diffusion = sigma * sqrt(float Td) * normal.Sample()
+    initialPrice * exp(drift + diffusion)
+
 
 /// <summary>
 /// Simulates a Geometric Brownian Motion from start time to end time.
 /// </summary>
 /// <param name="currentPrice">The current price of the stock.</param>
-/// <param name="startTime">The start time of the simulation.</param>
-/// <param name="endTime">The end time of the simulation.</param>
+/// <param name="T">The end time of the simulation.</param>
 /// <param name="dt">The time step for the simulation.</param>
 /// <param name="mu">The drift parameter for the simulation.</param>
 /// <param name="sigma">The volatility parameter for the simulation.</param>
 /// <param name="wpValues">A list of floats that represent a simulated Wiener Process.</param>
 /// <returns>A list of floats that represent the Geometric Brownian Motion.</returns>
-let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : int, dt : float, mu: float, sigma : float, wpValues : float list) : float list =
-    let t : float list = [float startTime .. dt .. float endTime]
-    let dailyVolatility = sigma / sqrt 365.
-    let dailyDrift = mu /365.
-    let output (i : int) = currentPrice * exp((dailyDrift - 0.5 * (dailyVolatility**2.0)) * t.[i] + dailyVolatility * wpValues.[i]) // corrected time scaling in drift term
-    List.mapi (fun i _ -> output i) t
+let GBMPath (initialPrice: float) (T: int) (dt: float) (mu: float) (sigma: float) : float list =
+    let normal = ContinuousDistribution.normal 0.0 1.0
+    let Td = float T / 365.0
+    let numSteps = int (float Td / dt)
+    let drift = (mu - 0.5 * sigma**2.) * dt
+    let diffusion = sigma * sqrt(dt)
+
+    let simulateSteps (initialPrice: float) : float list =
+        // Generate the Wiener process
+        let wienerProcess = List.init numSteps (fun _ -> normal.Sample() * sqrt(dt))
+        // Scan the Wiener process to compute the GBM
+        let prices = List.scan (fun price dW -> price * exp(drift + diffusion * dW)) initialPrice wienerProcess
+        prices
+
+    simulateSteps initialPrice
+
 
 
 /// <summary>
@@ -60,19 +80,10 @@ let GeometricBrownianMotion (currentPrice : float, startTime : int, endTime : in
 /// </summary>
 /// <param name="stock">The stock to be simulated.
 /// <param name="t">The end time of the simulation.
-/// <param name="dt">The time increment.
-/// <returns>A tuple list containing the time (day) and price of the stock.
-let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
-    let wpValues = WienerProcess(0, t, dt)
-    let simulate (currentPrice: float)  (mu : float) (sigma : float) (wpValues : float list) : (int * float) list = 
-        let dates : float list = [0.0 .. dt .. float t]
-        let GBM : float list = GeometricBrownianMotion(currentPrice, 0, t, dt, mu, sigma, wpValues)
-        List.map2 (fun d p ->
-            let intD = int d
-            if d = float intD then Some (intD, p) else None) dates GBM // only put stock price on specific days into the list
-        |> List.choose id
-    match XMLFunctions.getStockParameters stock with 
-    | Some (S0, mu, sigma) -> simulate S0 mu sigma wpValues
+/// <returns>the price of the stock. </returns>
+let simStock (stock : string) (t : int) : float =
+    match XMLFunctions.getStockParameters stock with
+    | Some (S0, mu, sigma) -> GBM S0 t mu sigma 
     | None -> failwith "Stock was not found"
     
 
@@ -83,15 +94,12 @@ let simStock (stock : string) (t : int) (dt : float) : (int * float) list =
 /// <param name="t">The number of days from the simulation start date to the simulation end date.</param>
 /// <param name="dt">The size of the time steps for the simulation.</param>
 /// <returns>A list of simulated stock prices for each stock in the list.</returns>
-let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), float> =
-    let data =
+let makeE (stocks : (string * int) list) : Map<(string * int), float> =
+    let keyValuePairs =
         stocks
-        |> List.collect (fun (s : string) ->
-            let stockData = simStock s t dt
-            stockData |> List.map (fun (i : int, f : float) -> ((s, i), f))
-        )
-    data |> Map.ofList
-
+        |> List.map (fun (stock, t) -> ((stock, t), simStock stock t))
+    let map = Map.ofSeq keyValuePairs
+    map
 
 /// <summary>
 /// Runs a Monte Carlo simulation to estimate the expected value of a given contract.
@@ -99,13 +107,13 @@ let makeE (stocks : string list) (t : int) (dt : float) : Map<(string * int), fl
 /// </summary>
 /// <param name="c1">The contract to simulate.</param>
 /// <returns>The expected value of the option.</returns>
-let simulateContract (sims : int) (timeIncrement : float) (c : Contract) : float =
-    let underlyings : string list = underlyings(c)
-    let maturity = maturity(c)
+
+let simulateContract (sims : int) (c : Contract) : float =
+    let underlyings : (string * int) list = underlyings c
     let evaluations : float list =
         [for _ in 1..sims ->
-            let resultMap = makeE underlyings maturity
-                                  timeIncrement
+            let resultMap = makeE underlyings
+                                  
             let E(s,t) : float = Map.find(s, t) resultMap
             let res = evalc I E c
             //printfn "%A" res
@@ -115,6 +123,7 @@ let simulateContract (sims : int) (timeIncrement : float) (c : Contract) : float
     evaluations |> List.average
 
 
+let ec1 = europeanCall 10 "AAPL" 95. USD
+let sec1 = simulateContract 10_000 ec1
 
-
-
+let co1 = chooser 0 10 "AAPL" 95. USD
