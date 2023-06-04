@@ -22,28 +22,40 @@ let plotsDict =
 
 [<EntryPoint>]
 let main argv =
+    (*
     printfn "%A" sec1
     printfn "%A" (blackScholes())
     
     let gbm() : float = List.last (GBMPath 100.0 3650 0.01 0.02 0.002)
     printfn "%A" (List.init 10_000 (fun _ -> gbm()) |> List.average)
 
+    *)
+
+    let cc = Acquire(10, Scale(Underlying("foo", 0), One DKK))
+
+    let ortest = flows cc
+    printfn "%A" ortest
 
 
+
+        (*
     let contractio =
-        All [
-            Acquire(5, Acquire(10, Scale(Underlying("AAPL", 3), One USD)));
+        All[
+            Acquire(2, Scale(Underlying("AAPL", 5), One DKK))
+            ]
            // Acquire(10, Scale(Underlying("AAPL", 2), One USD))
-           Acquire(15, Or(Acquire(10,Scale(Value 100.0, One DKK)), Acquire(10, Scale(Value 100.0, One DKK))))
-        ]
-
-    let cflows = flows contractio
-
-
+          // Acquire(15, Or(Acquire(10,Scale(Value 100.0, One DKK)), Acquire(10, Scale(Value 100.0, One DKK))))
+          
+    let cflows = maturity contractio
+    
 
     printfn "start %A" contractio
     printfn "after %A" cflows
     
+    *)
+    //let sim1 = simulateContract 10_000 k
+    //let sim2 = simulateContract 10_000 ec1
+    //printfn "%A" (sim1, sim2)
 
     //printfn "more simple %A" moresimple
     let seed = 1
