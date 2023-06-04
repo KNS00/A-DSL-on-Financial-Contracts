@@ -6,15 +6,12 @@ open Management
 /// </summary>
 /// <param name="ccy">The currency to evaluate.</param>
 /// <returns>The evaluated currency value as a float.</returns>
-let evalccy (curr: Currency) : float =
-    let EURUSD = 1.10
-    let GBPUSD = 1.24
-    let DKKUSD = 0.15
+let evalccy (f : (Currency -> float)) (curr: Currency) : float =
     match curr with
     | USD -> 1.0
-    | EUR -> EURUSD
-    | GBP -> GBPUSD
-    | DKK -> DKKUSD
+    | EUR -> f EUR
+    | GBP -> f GBP
+    | DKK -> f DKK
 
 /// <summary>
 /// Evaluates an observable value using a given function.
@@ -51,13 +48,13 @@ let rec evalo (E:(string*int)->float) (o : Obs) : float =
 /// <param name="E">The function used to evaluate stock prices.</param>
 /// <param name="c">The contract to evaluate.</param>
 /// <returns>The evaluated contract as a float.</returns>
-let rec evalc (I:int->float) (E:(string*int)->float) (c: Contract) : float =
+let rec evalc (C: Currency->float) (I:int->float) (E:(string*int)->float) (c: Contract) : float =
     match c with
-    | One c -> evalccy c  // evaluate currency
-    | Scale (obs, c1) -> evalo E obs * evalc I E c1 
+    | One c -> C c  // evaluate currency
+    | Scale (obs, c1) -> evalo E obs * evalc C I E c1 
     | All [] -> 0.0
-    | All (c1::cs) -> evalc I E c1 + evalc I E (All cs) 
-    | Acquire(t, c) -> I t * evalc (fun n -> I(n + t)) (fun (s,m) -> E(s,m+t)) c
-    | Or(c1, c2) -> max (evalc I E c1) (evalc I E c2)
-    | Give(c1) -> -1.0 * evalc I E c1 
-    | Then(c1, c2) -> if maturity c1 > 0 then evalc I E c1 else evalc I E c2 
+    | All (c1::cs) -> evalc C I E c1 + evalc C I E (All cs) 
+    | Acquire(t, c) -> I t * evalc C (fun n -> I(n + t)) (fun (s,m) -> E(s,m+t)) c
+    | Or(c1, c2) -> max (evalc C I E c1) (evalc C I E c2)
+    | Give(c1) -> -1.0 * evalc C I E c1 
+    | Then(c1, c2) -> if maturity c1 > 0 then evalc C I E c1 else evalc C I E c2 
