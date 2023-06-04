@@ -15,6 +15,15 @@ open Examples
 
 let normal = ContinuousDistribution.normal 0.0 1.0
 
+
+let f (ccy : Currency) : float =
+    match ccy with
+    | USD -> 1.0
+    | EUR -> 1.10
+    | GBP -> 1.24
+    | DKK -> 0.15
+
+
 /// <summary>
 /// Discounts the value 1 back in time according to the interest rate.
 /// </summary>
@@ -115,7 +124,7 @@ let simulateContract (sims : int) (c : Contract) : float =
             let resultMap = makeE underlyings
                                   
             let E(s,t) : float = Map.find(s, t) resultMap
-            let res = evalc I E c
+            let res = evalc f I E c
             //printfn "%A" res
             res]
     //printfn "%s %A" "evaluations" evaluations
@@ -123,7 +132,7 @@ let simulateContract (sims : int) (c : Contract) : float =
     evaluations |> List.average
 
 
-let ec1 = europeanCall 10 "AAPL" 95. USD
+let ec1 = europeanCall1 10 "AAPL" 95. USD
 let sec1 = simulateContract 10_000 ec1
 
 let co1 = chooser 0 10 "AAPL" 95. USD
