@@ -31,12 +31,20 @@ let ccSwap (T : int) (ccA : Currency) (ccB : Currency) (nA : float) (nB : float)
     ])
 
 
-let europeanCall (T : int) (stock : string) (strike : float )  (ccy : Currency) : Contract =
-    let payoff = 
+let europeanCall1 (T : int) (stock : string) (strike : float )  (ccy : Currency) : Contract =
+    let payoff : Obs = 
         Max(Value 0.0,
             Sub(Underlying(stock, 0), 
                 Value strike))
     Acquire(T, Scale(payoff, One ccy))
+
+let europeanCall2 (T : int) (stock : string) (strike : float )  (ccy : Currency) : Contract =
+    let c : Contract = Or(
+                        Scale(Value 0.0, One ccy),
+                        Scale(Sub(Underlying(stock, 0),Value strike), One USD))
+    Acquire(T, c)
+
+
 
 let europeanPut (T : int) (u : string) (strike : float )  (ccy : Currency) : Contract =
     let payoff = 
@@ -52,6 +60,6 @@ let forward (T : int) (u : string) (strike : float )  (ccy : Currency)  : Contra
     Acquire(T, Scale(payoff, One ccy))
 
 let chooser(t : int) (T : int) (stock : string) (strike : float) (ccy : Currency) : Contract =
-    let ec = europeanCall T stock strike ccy
+    let ec = europeanCall1 T stock strike ccy
     let ep = europeanPut T stock strike ccy
     Acquire(t, Or(ec, ep)) // remember: the maturity of ec or ep is then t+T.
