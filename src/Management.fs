@@ -1,5 +1,6 @@
 ﻿module Management
 open Domain
+open Examples
 
 /// <summary>
 /// Calculates the maturity date of a given contract.
@@ -97,26 +98,15 @@ let underlyings (c: Contract) : (string * int) list =
     u 0 c |> List.distinct 
 
 
-
-let rec certainObs (o : Obs) : bool =
-    match o with
-    | Value _ -> true
-    | Underlying _ -> false
-    | Add (o1, o2) -> certainObs o1 && certainObs o2
-    | Sub (o1, o2) -> certainObs o1 && certainObs o2
-    | Mul (o1, o2) -> certainObs o1 && certainObs o2
-    | Max (o1, o2) -> certainObs o1 && certainObs o2
-
-
-let rec simplifyObs (E: (string * int) -> float) (o : Obs) : Obs =
+let rec simplifyObs (d : int) (E: (string * int) -> float) (o : Obs) : Obs =
   let simpl f opr o1 o2 : Obs =
-    match (simplifyObs E o1,simplifyObs E o2) with
+    match (simplifyObs d E o1,simplifyObs d E o2) with
     | (Value r1, Value r2) -> Value(f r1 r2)
     | (o1, o2) -> opr(o1, o2)
   match o with
     | Value _ -> o
     | Underlying(s,t) ->
-        try Value(E(s,t))
+        try Value(E(s,t+d))
         with _ -> Underlying(s,t)
     | Mul (o1, o2) -> simpl (fun x y -> x*y) Mul o1 o2 
     | Add (o1, o2) -> simpl (fun x y -> x+y) Add o1 o2 
@@ -124,49 +114,48 @@ let rec simplifyObs (E: (string * int) -> float) (o : Obs) : Obs =
     | Max (o1, o2) -> simpl max Max o1 o2 
 
  
-let rec simplify (E: (string * int) -> float) (c: Contract) : Contract =
-    match c with
-    | All cs ->
-        let cs = List.map (fun c -> simplify E c ) cs
-        match cs with
-        | [c] -> c
-        | cs -> All cs
-    | One _ -> c
-    | Acquire(t, c) ->
-        if t <= 0 then
-            simplify E c
-        else
-            Acquire(t, (simplify E c))
-    | Scale(k, c) ->
-        match Scale(simplifyObs E k, simplify E c) with
-        | Scale(k, Scale(kk, c1)) ->
-            if (certainObs k && certainObs kk) then
-                Scale(simplifyObs E (Obs.Mul(simplifyObs E k, simplifyObs E kk)), c1)
+let simplify (E: (string * int) -> float) (c: Contract) : Contract =
+    let rec si (d : int) (E: (string * int) -> float) (c: Contract) =
+        match c with
+        | All cs ->
+            let cs = List.map (fun c -> si d E c ) cs
+            match cs with
+            | [c] -> c
+            | cs -> All cs
+        | One _ -> c
+        | Acquire(t, c) ->
+            if t <= 0 then
+                si (d+t) E c
             else
-                c1
-        | Scale(_, All[]) -> All[]
+                Acquire(t, (si (d+t) E c)) 
         | Scale(k, c) ->
-            let simpl = simplifyObs E k // im not sure if we need to simplify again
-            if (simpl = Value 0.0) then All []
-            else Scale(simpl, c)
-        | _ -> Scale(simplifyObs E k, c) // im not sure if we need to simplify again
-    | Give c ->
-        match Give (simplify E c) with
-        | Give (Give innerC) -> simplify E innerC 
-        | innerC -> innerC
-    | Or(c1, c2) -> Or(simplify E c1, simplify E c2)
-    | Then(c1, c2) -> Then(simplify E c1, simplify E c2)
+            match Scale(simplifyObs d E k, si d E c) with
+            | Scale(k, Scale(kk, c1)) ->
+                    Scale(simplifyObs d E (Obs.Mul(simplifyObs d E k, simplifyObs d E kk)), c1)
+            | Scale(_, All[]) -> All[]
+            | Scale(k, c) ->
+                let simpl = simplifyObs d E k 
+                if (simpl = Value 0.0) then All []
+                else Scale(simpl, c)
+            | _ -> Scale(simplifyObs d E k, c) 
+        | Give c ->
+            match Give (si d E c) with
+            | Give (Give innerC) -> si d E innerC 
+            | innerC -> innerC
+        | Or(c1, c2) -> Or(si d E c1, si d E c2)
+        | Then(c1, c2) -> Then(si d E c1, si d E c2)
+    si 0 E c
 
-let adv (E : (string * int) -> float) (d : int) (c : Contract)  : Contract =
-    let rec advance (d : int) (c : Contract)  : Contract =
+let advance (E : (string * int) -> float) (d : int) (c : Contract)  : Contract =
+    let rec adv (d : int) (c : Contract)  : Contract =
         match c with
         | One _ -> c
-        | Scale(o,c) -> Scale(o, advance d c)
-        | All(cs) -> All(List.map (fun x -> advance d x) cs)
-        | Acquire(t, c) -> Acquire(t-d, advance d c)
-        | Give(c) -> Give(advance d c)
-        | Or(c1, c2) -> Or(advance d c1, advance d c2)
-    simplify E (advance d c)
+        | Scale(o,c) -> Scale(o, adv d c)
+        | All(cs) -> All(List.map (fun x -> adv d x) cs)
+        | Acquire(t, c) -> Acquire(t-d, adv d c)
+        | Give(c) -> Give(adv d c)
+        | Or(c1, c2) -> Or(adv d c1, adv d c2)
+    simplify E (adv d c)
 
 
 
@@ -175,50 +164,53 @@ let rec choose (f : Contract -> float) (c : Contract) : Contract =
     | One _-> c
     | Scale(o, c) -> Scale(o, choose f c)
     | All(cs) -> All(List.map (fun c -> choose f c) cs)
-    | Acquire(t, c) -> Acquire(t, choose f c)
+    | Acquire(0, c) ->
+        Acquire(0, choose f c)
+    | Acquire(t, c) -> Acquire(t, c)
     | Give(c) -> Give(choose f c)
     | Or(c1, c2) ->
         let (p1 : float option, p2 : float option) =
-            try (Some(f c1), Some(f c2))
+            try (Some(f (choose f c1)), Some(f (choose f c2)))
             with _ -> (None, None)
         match (p1, p2) with
-        | (None, None) -> Or(c1, c2)
-        | _ when (p1, p2) = (None, None) -> Or(c1, c2)
-        | _ when p1 > p2 -> c1
-        | _ -> c2
-
-
+        | (None, None) -> Or(choose f c1, choose f c2)
+        | _ when p1 > p2 -> choose f c1
+        | _ -> choose f c2
 
 // for testing
 let dummyE : (string * int) -> float =
     fun (s, t) ->
         match s, t with
         // dummy prices for testing
-        | "DIKU", 0 -> 100.0
-        | "DIKU", -1 -> 110.0
-        | "DIKU", -2 -> 120.0
-        | "DIKU", -3 -> 130.0
-        | "DIKU", -4 -> 140.0
-        | "DIKU", -5 -> 150.0
-        | "DIKU", -6 -> 160.0
-        | "DIKU", -7 -> 170.0
-        | "DIKU", -8 -> 180.0
-        | "DIKU", -9 -> 190.0
-        | "DIKU", -10 -> 200.0
         | "AAPL", 0 -> 300.0
-        | "AAPL", -1 -> 310.0
-        | "AAPL", -2 -> 320.0
-        | "AAPL", -3 -> 330.0
-        | "AAPL", -4 -> 340.0
-        | "AAPL", -5 -> 350.0
-        | "AAPL", -6 -> 360.0
-        | "AAPL", -7 -> 370.0
-        | "AAPL", -8 -> 380.0
-        | "AAPL", -9 -> 390.0
-        | "AAPL", -10 -> 400.0
+        | "MSFT", 0 -> 400.0
         | _, _ -> failwith "price not found"
-
    
+
+// example
+let cp =
+    All[
+    europeanCall2 1 "AAPL" 100.0 USD;
+    flow 10 100.0 USD;
+    Acquire(0, Or((flow 1 100.0 USD), (flow 1 110.0 USD)))
+    ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -293,3 +285,14 @@ let rec obsMaturity (i : int) (o : Obs) : int =
     | Mul(o1, o2) | Add (o1, o2) | Sub (o1, o2) | Max(o1, o2) ->
         max (obsMaturity i o1) (obsMaturity i o2)
     
+
+
+let rec certainObs (o : Obs) : bool =
+    match o with
+    | Value _ -> true
+    | Underlying _ -> false
+    | Add (o1, o2) -> certainObs o1 && certainObs o2
+    | Sub (o1, o2) -> certainObs o1 && certainObs o2
+    | Mul (o1, o2) -> certainObs o1 && certainObs o2
+    | Max (o1, o2) -> certainObs o1 && certainObs o2
+
