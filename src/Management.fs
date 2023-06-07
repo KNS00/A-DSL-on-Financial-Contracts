@@ -64,7 +64,6 @@ let causal (c : Contract) : (int * flow) List =
         | All cs' -> List.concat (List.map (cs t d s) cs')
         | Give(c) -> cs t d s c
         | Or(c1, c2) -> cs t d s c1 @ cs t d s c2
-        | _ -> failwith "to do"
     cs 0 0 None c
 
 /// <summary>
