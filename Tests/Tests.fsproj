@@ -16,7 +16,6 @@
     <Compile Include="EvaluationTests/currencyTests.fs" /> 
     <Compile Include="EvaluationTests/obsTests.fs" /> 
     <Compile Include="EvaluationTests/contractTests.fs" /> 
-    <Compile Include="Dependence.fs" />
     <Compile Include="main.fs" />
   </ItemGroup>
 
