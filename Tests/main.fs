@@ -12,18 +12,6 @@ open FsUnit
 open Xunit
 
 module testProgram =
-    let z =
-        [[0.0; 0.2; 0.7];
-         [0.5; 0.3; 0.9];
-         [0.7; 0.8; 0.1];
-         [0.8; 1.1; 0.2];
-         [0.9; 1.3; 0.7]]
-    let y = simulationTests.subCols z
-    printfn "%A" y
-    printfn "%A" (simulationTests.dist y)
-
-
-
     let squared(x : float) 
         = x**2.0
     [<Theory>]
