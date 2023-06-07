@@ -59,7 +59,7 @@ module simulationTests =
         distribution
         |> List.map isDist
         |> List.forall (fun result -> result)
-        (*
+        
     [<Theory>] 
     [<InlineData(1, 1.0)>]
     [<InlineData(2, 1.0)>]    
@@ -78,7 +78,7 @@ module simulationTests =
         let distribution : (float * float) List = dist sub
         let test : bool = checkDist dt distribution
         test |> should equal true
-        *)
+        
         
 
     [<Theory>]
@@ -97,8 +97,8 @@ module simulationTests =
         printfn "%A" sim
         let test : bool = abs(exp - sim) / sim <= 10e-2
         test |> should equal true 
-        (*
         
+       
         
    [<Theory>] 
    [<InlineData(100.0, 1, 0.1, 1.0, 0.05)>]  
@@ -122,4 +122,4 @@ module simulationTests =
 
         test |> should equal true
         
-        *)
+        

@@ -17,7 +17,6 @@ let maturity (c : Contract) : int =
         | Acquire (t, c1) -> m (t+i) c1
         | Or (c1, c2) -> max (m i c1) (m i c2)
         | Give c1 -> m i c1
-        | Then (c1, c2) -> (m i c1) + (m i c2)
     m 0 c
 
 type flow =
@@ -143,7 +142,6 @@ let simplify (E: (string * int) -> float) (c: Contract) : Contract =
             | Give (Give innerC) -> si d E innerC 
             | innerC -> innerC
         | Or(c1, c2) -> Or(si d E c1, si d E c2)
-        | Then(c1, c2) -> Then(si d E c1, si d E c2)
     si 0 E c
 
 let advance (E : (string * int) -> float) (d : int) (c : Contract)  : Contract =
@@ -248,10 +246,6 @@ let rec getStocksAsObs (c: Contract) : Obs list =
     | Acquire (_, c') -> getStocksAsObs c'
     | Give c' -> getStocksAsObs c'
     | Or (c1, c2) ->
-        let stocks_in_c1 = getStocksAsObs c1
-        let stocks_in_c2 = getStocksAsObs c2
-        List.append stocks_in_c1 stocks_in_c2 |> List.distinct
-    | Then (c1, c2) ->
         let stocks_in_c1 = getStocksAsObs c1
         let stocks_in_c2 = getStocksAsObs c2
         List.append stocks_in_c1 stocks_in_c2 |> List.distinct

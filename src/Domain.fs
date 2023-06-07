@@ -26,6 +26,3 @@ type Contract = // All these constructers are used to define a contract.
   | Acquire of int * Contract // Acquire contract int days from now assuming a constant interest rate
   | Give of Contract 
   | Or of Contract * Contract
-  | Then of Contract * Contract // Then(c1, c2) means you acquire c1 if it has not expired; else c2.
-
-

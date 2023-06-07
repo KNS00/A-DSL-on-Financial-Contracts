@@ -58,4 +58,3 @@ let rec evalc (C: Currency->float) (I:int->float) (E:(string*int)->float) (c: Co
     | Acquire(t, c) -> I t * evalc C (fun n -> I(n + t)) (fun (s,m) -> E(s,m+t)) c
     | Or(c1, c2) -> max (evalc C I E c1) (evalc C I E c2)
     | Give(c1) -> -1.0 * evalc C I E c1 
-    | Then(c1, c2) -> if maturity c1 > 0 then evalc C I E c1 else evalc C I E c2 

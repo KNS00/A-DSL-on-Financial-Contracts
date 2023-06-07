@@ -204,7 +204,7 @@ let plotEuropeanCall() =
     let chart = Chart.Plot(traces, layout)
     chart |> Chart.Show
     
-    
+    (*
 let blackScholes() =
     let calculateBlackScholesCallPrice s0 x r t sigma =
         let d1 = (log(s0 / x) + (r + (sigma**2.0) / 2.0) * t) / (sigma * sqrt(t))
@@ -224,4 +224,4 @@ let blackScholes() =
 
     let blackScholesPrice = calculateBlackScholesCallPrice S K r T sigma
     printfn "Black-Scholes Call Price: %f" blackScholesPrice
-  
+  *)
