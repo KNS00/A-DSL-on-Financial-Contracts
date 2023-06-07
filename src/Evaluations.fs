@@ -1,6 +1,7 @@
 ﻿module Evaluations
 open Domain
 open Management
+
 /// <summary>
 /// Evaluates a currency to USD.
 /// </summary>
@@ -8,7 +9,7 @@ open Management
 /// <returns>The evaluated currency value as a float.</returns>
 let evalccy (f : (Currency -> float)) (curr: Currency) : float =
     match curr with
-    | USD -> 1.0
+    | USD -> f USD
     | EUR -> f EUR
     | GBP -> f GBP
     | DKK -> f DKK
