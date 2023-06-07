@@ -53,13 +53,13 @@ let europeanPut (T : int) (u : string) (strike : float )  (ccy : Currency) : Con
                 Underlying(u, 0)))
     Acquire(T, Scale(payoff, One ccy))
 
-let forward (T : int) (u : string) (strike : float )  (ccy : Currency)  : Contract =
+let forwardOption (T : int) (u : string) (strike : float )  (ccy : Currency)  : Contract =
     let payoff = 
         Sub(Value strike,
             Underlying(u, 0))
     Acquire(T, Scale(payoff, One ccy))
 
-let chooser(t : int) (T : int) (stock : string) (strike : float) (ccy : Currency) : Contract =
+let chooserOption(t : int) (T : int) (stock : string) (strike : float) (ccy : Currency) : Contract =
     let ec = europeanCall1 T stock strike ccy
     let ep = europeanPut T stock strike ccy
     Acquire(t, Or(ec, ep)) // remember: the maturity of ec or ep is then t+T.
