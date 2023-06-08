@@ -46,17 +46,16 @@ let europeanCall2 (T : int) (stock : string) (strike : float )  (ccy : Currency)
 
 
 
-let europeanPut (T : int) (u : string) (strike : float )  (ccy : Currency) : Contract =
-    let payoff = 
-        Max(Value 0.0,
-            Sub(Value strike,
-                Underlying(u, 0)))
-    Acquire(T, Scale(payoff, One ccy))
+let europeanPut (T : int) (stock : string) (strike : float )  (ccy : Currency) : Contract =
+    let c : Contract = Or(
+                        Scale(Value 0.0, One ccy),
+                        Scale(Sub(Value strike, Underlying(stock, 0)), One USD))
+    Acquire(T, c)
 
-let forwardOption (T : int) (u : string) (strike : float )  (ccy : Currency)  : Contract =
+let forwardOption (T : int) (stock : string) (strike : float )  (ccy : Currency)  : Contract =
     let payoff = 
         Sub(Value strike,
-            Underlying(u, 0))
+            Underlying(stock, 0))
     Acquire(T, Scale(payoff, One ccy))
 
 let chooserOption(t : int) (T : int) (stock : string) (strike : float) (ccy : Currency) : Contract =
