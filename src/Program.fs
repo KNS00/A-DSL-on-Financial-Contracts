@@ -23,6 +23,12 @@ let plotsDict =
 [<EntryPoint>]
 let main argv =
 
+    let gc : Contract = Acquire(10, Scale(Value 10.0, Scale(Value 10.0, Scale(Value 10.0, All[]))))
+    printfn "%A" gc
+    let sgc = simplify dummyE gc
+    printfn "%A" sgc
+
+
     let C_ (ccy : Currency) : float =
         1.0 // Assume same rate for each currency for simplification
     let I_ (t : int) : float = 1.0 // Assume no discount rate for simplification
@@ -31,6 +37,7 @@ let main argv =
         match z with
         | ("AAPL", _) -> 150.0
         | ("MSFT", _) -> 10.0
+        | _ -> failwith "price not found"
 
     let fz (c : Contract) : float = Evaluations.evalc C_ I_ E_ c
 
@@ -44,7 +51,16 @@ let main argv =
 
     let fz_ : Contract = choose fz (Acquire(0, (Or(ec_1, ec_2))))
     
-    printfn "fz_ %A" fz_
+    //printfn "fz_ %A" fz_
+    let fzz (c : Contract) : float = Evaluations.evalc C_ I E_ c
+    let new_c1 = Acquire(10, Acquire(0, Scale(Value 100.0, One DKK)))
+    let c1_price = fzz new_c1
+
+    
+    printfn "c: %A" new_c1
+    printfn "price: %A" c1_price
+    (*
+
 
 
 
@@ -160,5 +176,5 @@ let main argv =
             printfn "Running function %s" arg
             func()
         | (false, _) -> printfn "%s is a invalid function name" arg)
-        *)
+        *) *)
     0
