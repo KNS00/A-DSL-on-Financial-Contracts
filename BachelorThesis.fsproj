@@ -4,6 +4,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
+    <NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
   </PropertyGroup>
 
   <!-- Source Files -->
