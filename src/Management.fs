@@ -121,11 +121,13 @@ let simplify (E: (string * int) -> float) (c: Contract) : Contract =
             | [c] -> c
             | cs -> All cs
         | One _ -> c
-        | Acquire(t, c) ->
+        | Acquire(t1, Acquire(t2, c'))
+            -> si d E (Acquire(t1+t2, c'))
+        | Acquire(t, c') ->
             if t <= 0 then
-                si (d+t) E c
+                si (d+t) E c'
             else
-                Acquire(t, (si (d+t) E c)) 
+                Acquire(t, si (d+t) E c')
         | Scale(k, c) ->
             match Scale(simplifyObs d E k, si d E c) with
             | Scale(k, Scale(kk, c1)) ->
@@ -137,8 +139,9 @@ let simplify (E: (string * int) -> float) (c: Contract) : Contract =
                 else Scale(simpl, c)
             | _ -> Scale(simplifyObs d E k, c) 
         | Give c ->
-            match Give (si d E c) with
-            | Give (Give innerC) -> si d E innerC 
+            let innerC = Give (si d E c)
+            match innerC with
+            | Give (Give c') -> si d E c'
             | innerC -> innerC
         | Or(c1, c2) -> Or(si d E c1, si d E c2)
     si 0 E c
@@ -164,7 +167,7 @@ let rec choose (f : Contract -> float) (c : Contract) : Contract =
     | Acquire(0, c) ->
         Acquire(0, choose f c)
     | Acquire(t, c) -> Acquire(t, c)
-    | Give(c) -> Give(choose f c)
+    | Give(c) -> Give(choose (fun x -> -f x) c)
     | Or(c1, c2) ->
         let (p1 : float option, p2 : float option) =
             try (Some(f (choose f c1)), Some(f (choose f c2)))
