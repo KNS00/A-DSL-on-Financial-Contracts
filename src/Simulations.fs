@@ -27,7 +27,7 @@ let f (c : Currency) : float =
 /// </summary>
 /// <param name="i">The time period in days.</param>
 /// <returns>The value 1 discounted to the current time.</returns>
-let I (t : int) : float =  
+let I (t : int) : float =
     let r = 0.02
     let presentValue : float = exp(-r/365. * (float t)) // e^{-rt}
     presentValue
