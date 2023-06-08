@@ -25,7 +25,7 @@ let rec evalo (E:(string*int)->float) (o : Obs) : float =
     | Value n -> n
     | Underlying (s, t) ->
         try E(s,t)
-        with _ -> failwith ("Price of " + s + " at time " + string t + " was not found in the environment")
+        with _ -> failwith "Price not found in the environment."
     | Mul (c1, c2) ->
         let n1 = evalo E c1 
         let n2 = evalo E c2 
@@ -55,6 +55,7 @@ let rec evalc (C: Currency->float) (I:int->float) (E:(string*int)->float) (c: Co
     | Scale (obs, c1) -> evalo E obs * evalc C I E c1 
     | All [] -> 0.0
     | All (c1::cs) -> evalc C I E c1 + evalc C I E (All cs) 
-    | Acquire(t, c) -> I t * evalc C (fun n -> I(n + t)) (fun (s,m) -> E(s,m+t)) c
+    | Acquire(t, c) -> I t * evalc C I (fun (s,m) -> E(s,m+t)) c
+
     | Or(c1, c2) -> max (evalc C I E c1) (evalc C I E c2)
     | Give(c1) -> -1.0 * evalc C I E c1 
