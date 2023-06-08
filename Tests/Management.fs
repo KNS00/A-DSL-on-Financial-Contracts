@@ -128,6 +128,7 @@ module ManagementTests =
         let c7 = All[c3; c4; c5]
         let c8 = Scale(Value 100.0, All[])
         let c9 = Scale(Value 0.0, c1)
+        let c10 = Acquire(10, Acquire(20, Acquire(30, One DKK)))
         [
         [|c1; Scale(Value 1200.0, One DKK)|]
         [|c2; Scale(Value 100.0, One DKK)|]
@@ -139,8 +140,8 @@ module ManagementTests =
         [|c8; All[] |]
         [|c9; Scale(Value 0.0, One DKK) |]
         [|simplify dE c9 ; All[] |] // double simplify to finish c9
+        [|c10; Acquire(60, One DKK)|]
         ]
-
     [<Theory>]
     [<MemberData(nameof(simplifyTestCases))>]
     let ``Assert simplify``(c : Contract, expected) =
@@ -179,6 +180,7 @@ module ManagementTests =
         match z with
         | ("AAPL", _) -> 150.0
         | ("MSFT", _) -> 10.0
+        | _ -> failwith "price not found"
 
     let f (c : Contract) : float = Evaluations.evalc C_ I_ E_ c
 

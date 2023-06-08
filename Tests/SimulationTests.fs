@@ -86,7 +86,6 @@ module simulationTests =
     [<InlineData(100.0, 10, 0.03, 0.02)>]     
     [<InlineData(100.0, 365, 0.07, 0.05)>]    
     [<InlineData(100.0, 177, 0.2, 0.1)>]     
-
     let ``Assert GBM Expected Value``(S0, endTime, mu, sigma) =
         let exp = S0 * exp(float mu * float(endTime) / 365.)
         let n = 10_000
