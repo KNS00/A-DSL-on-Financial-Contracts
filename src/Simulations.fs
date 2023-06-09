@@ -15,8 +15,8 @@ open Examples
 
 let normal = ContinuousDistribution.normal 0.0 1.0
 
-let f (c : Currency) : float =
-    match c with
+let f (cur : Currency) : float =
+    match cur with
     | USD -> 1.0
     | EUR -> 1.10
     | GBP -> 1.24
