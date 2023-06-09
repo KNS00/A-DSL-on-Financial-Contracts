@@ -23,12 +23,37 @@ let plotsDict =
 [<EntryPoint>]
 let main argv =
 
+
+    let E__(s,t) : float =
+        match (s,t) with
+        | ("AAPL", 0) -> 100.0
+        | _-> failwith "price not found"
+    let kc =
+        All[
+        europeanCall2 1 "AAPL" 90.0 USD
+        zcb 1 500.0 USD 
+        chooserOption 1 10 "AAPL" 120.0 USD]
+    let kc1 = advance E__ 1 kc
+    let kc2 = choose (evalc f I E__) kc1
+    //printfn "%A" kc1
+    printfn "%A" kc2
+    //let kc = europeanCall2 10 "AAPL" 90.0 USD
+    //printfn "%A" advance E__ 1 kc
+    
+    let kc3 = simulateContract 100_000 kc2
+    printfn "%A" kc3
+
+
+
+    (*
+
+
     let gc : Contract = Acquire(10, Scale(Value 10.0, Scale(Value 10.0, Scale(Value 10.0, All[]))))
     printfn "%A" gc
     let sgc = simplify dummyE gc
     printfn "%A" sgc
 
-
+    *)
     let C_ (ccy : Currency) : float =
         1.0 // Assume same rate for each currency for simplification
     let I_ (t : int) : float = 1.0 // Assume no discount rate for simplification
@@ -38,7 +63,7 @@ let main argv =
         | ("AAPL", _) -> 150.0
         | ("MSFT", _) -> 10.0
         | _ -> failwith "price not found"
-
+        (*
     let fz (c : Contract) : float = Evaluations.evalc C_ I_ E_ c
 
     // Choose
@@ -62,7 +87,7 @@ let main argv =
     (*
 
 
-
+    *)
 
 
     let ec1 = europeanCall2 0 "AAPL" 95. USD
