@@ -38,9 +38,7 @@ module simulationTests =
 
     // Step 3: find the distribution
     let dist (input: float list list) =
-        let numRows = List.length input
-        let numCols = List.length (List.head input)
-        
+        let numRows = List.length input        
         let stats (column: float list) =
             let sum = List.sum column
             let average = sum / float numRows
