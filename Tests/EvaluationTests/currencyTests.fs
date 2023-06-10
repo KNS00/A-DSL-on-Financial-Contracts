@@ -2,7 +2,6 @@
 open Domain
 open Evaluations
 open Simulations
-open Analysis
 open FsUnit
 open Xunit
 

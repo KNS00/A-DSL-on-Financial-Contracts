@@ -1,14 +1,4 @@
-﻿open Domain
-open XMLFunctions
-open Evaluations
-open Simulations
-open Analysis
-open Examples
-open Management
-open ManagementTests
-open Program
-open simulationTests
-open FsUnit
+﻿open FsUnit
 open Xunit
 
 module testProgram =

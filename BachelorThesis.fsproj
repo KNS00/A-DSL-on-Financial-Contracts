@@ -12,11 +12,10 @@
     <None Include="src\stock_data.xml"></None>
     <Compile Include="src\Domain.fs" />
     <Compile Include="src\XML.fs" />
-    <Compile Include="src\Examples.fs" />
+    <Compile Include="src\Instruments.fs" />
     <Compile Include="src\Management.fs" />
     <Compile Include="src\Evaluations.fs" />
     <Compile Include="src\Simulations.fs" />
-    <Compile Include="src\Analysis.fs" />
     <Compile Include="src\Plots.fs" />
     <Compile Include="src\Program.fs" />
   </ItemGroup>
@@ -27,7 +26,6 @@
     <PackageReference Include="FSharp.Stats" Version="0.4.11" />
     <PackageReference Include="MathNet.Numerics.FSharp" Version="5.0.0" />
     <PackageReference Include="XPlot.Plotly" Version="4.0.6" />
-    <PackageReference Include="FSharp.Data" Version="6.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="FSharp.Core" Version="7.0.300">
       <GeneratePathProperty></GeneratePathProperty>

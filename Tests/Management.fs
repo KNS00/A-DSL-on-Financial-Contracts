@@ -1,7 +1,7 @@
 ﻿module ManagementTests
 open Domain
 open Management
-open Examples
+open Instruments
 open FsUnit
 open Xunit
 

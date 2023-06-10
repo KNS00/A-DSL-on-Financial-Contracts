@@ -1,15 +1,5 @@
 ﻿module Plots
-// Project-specific modules
-open Domain
-open XMLFunctions
-open Evaluations
 open Simulations
-open Analysis
-open Examples
-open Management
-
-// External modules
-open System
 open FSharp.Stats
 open FSharp.Stats.Distributions
 open XPlot.Plotly
@@ -95,7 +85,6 @@ let plotAsian() =
     let dates = List.map (fun x -> x * endTime) [0.0 .. dt .. 1.0]
     let gbmValues =
         [ for i in 0..sims ->
-            printfn "sim: %i" i
             Random.SetSampleGenerator(Random.RandThreadSafe(i)) // new seed everytime so we get new GBM path
             let gbmValues : float list = GBMPathPlot initialPrice endTime dt mu sigma
             gbmValues ]
@@ -159,7 +148,6 @@ let plotEuropeanCall() =
     let dates : float list = [0.0 .. dt .. endTime]
     let gbmValuesList : float list list =
         [ for i in 0..sims ->
-            printfn "sim: %i" i
             Random.SetSampleGenerator(Random.RandThreadSafe(i)) // new seed everytime so we get new GBM path
             let gbmValues : float list = List.map(fun T -> GBMPlot initialPrice T mu sigma) dates
             gbmValues]

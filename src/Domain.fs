@@ -6,7 +6,7 @@ module Domain
 type Currency = USD | EUR | GBP | DKK 
 
 /// <summary>
-/// Represents an observable value: a value that is agreed upon by two parties.
+/// Represents an observable value: a value that is agreed upon by parties.
 /// </summary>
 type Obs = 
   | Value of double // how many

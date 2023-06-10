@@ -1,6 +1,6 @@
 ﻿module Management
 open Domain
-open Examples
+open Instruments
 
 /// <summary>
 /// Calculates the maturity date of a given contract.

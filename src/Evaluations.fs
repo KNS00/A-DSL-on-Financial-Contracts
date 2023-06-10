@@ -1,6 +1,5 @@
 ﻿module Evaluations
 open Domain
-open Management
 
 /// <summary>
 /// Evaluates a currency to USD.

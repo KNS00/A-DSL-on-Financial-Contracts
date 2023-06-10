@@ -1,4 +1,4 @@
-﻿module Examples
+﻿module Instruments
 open Domain
 
 
@@ -62,3 +62,4 @@ let chooserOption(t : int) (T : int) (stock : string) (strike : float) (ccy : Cu
     let ec = europeanCall2 T stock strike ccy
     let ep = europeanPut T stock strike ccy
     Acquire(t, Or(ec, ep)) // remember: the maturity of ec or ep is then t+T.
+

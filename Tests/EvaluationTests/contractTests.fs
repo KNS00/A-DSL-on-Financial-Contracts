@@ -2,16 +2,10 @@
 open Domain
 open Evaluations
 open Simulations
-open Analysis
 open FsUnit
 open Xunit
-open FSharp.Stats
-open FSharp.Stats.Distributions
-open XMLFunctions
-open Examples
+open Instruments
 open Management
-open currencyTests
-open observableTests
 module contractTests =
 
     let testE (s: string, t: int) = 

@@ -1,17 +1,10 @@
 ﻿module Simulations
-open FSharp.Stats
-open FSharp.Math
-open FSharp.Stats.Distributions
-open FSharp.Data
-open XPlot.Plotly
-open System.IO
-open System.Runtime.Serialization.Formatters.Binary
-open System.Collections.Generic
-open FSharp.Data
 open Domain
 open Evaluations
 open Management
-open Examples
+open FSharp.Stats
+open FSharp.Stats.Distributions
+
 
 let normal = ContinuousDistribution.normal 0.0 1.0
 
