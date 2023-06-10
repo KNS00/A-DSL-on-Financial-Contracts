@@ -3,10 +3,15 @@ open Domain
 open Evaluations
 open Simulations
 open FsUnit
+open FSharp.Stats
 open Xunit
 open Instruments
 open Management
 module contractTests =
+    // Set a seed so that sampling is reproducible
+    let seed = 1
+    Random.SetSampleGenerator(Random.RandThreadSafe(seed))   
+    
 
     let testE (s: string, t: int) = 
         match (s, t) with

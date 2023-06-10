@@ -1,15 +1,17 @@
 ﻿module simulationTests
 open Simulations
+open FSharp.Stats
 open FsUnit
 open Xunit
 
 module simulationTests =
+    let seed = 1
+    Random.SetSampleGenerator(Random.RandThreadSafe(seed))   
+
     // checks if two lists are approximately equal
     let listsAreEqual (xs: float list) (ys: float list) (tolerance: float) : bool = 
         match List.length xs, List.length ys with
         | xlen, ylen when xlen <> ylen ->
-            printfn "%A" xlen
-            printfn "%A" ylen
             failwith "Lists must have the same length"
         | _ -> xs |> List.forall2 (fun x y -> abs(x - y) / y <= tolerance) ys
 
@@ -87,8 +89,6 @@ module simulationTests =
         let sim : float =
             List.init n (fun _ -> GBM S0 endTime mu sigma)
             |> List.average
-        printfn "%A" exp
-        printfn "%A" sim
         let test : bool = abs(exp - sim) / sim <= 10e-2
         test |> should equal true 
         
