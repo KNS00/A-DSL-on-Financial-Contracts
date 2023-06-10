@@ -24,9 +24,7 @@
   <ItemGroup>
     <!-- Core Libraries -->
     <PackageReference Include="FSharp.Stats" Version="0.4.11" />
-    <PackageReference Include="MathNet.Numerics.FSharp" Version="5.0.0" />
     <PackageReference Include="XPlot.Plotly" Version="4.0.6" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="FSharp.Core" Version="7.0.300">
       <GeneratePathProperty></GeneratePathProperty>
     </PackageReference>
