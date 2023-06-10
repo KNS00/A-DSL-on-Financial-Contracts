@@ -82,6 +82,7 @@ module contractTests =
         [| Give(t1); -I(10) * 100.0  |]
         [| Give(t2); -I(100) * 100.0 |]
         [| Give(t3); -I(0) * 100.0 |]
+        [| Acquire(0, Scale(Sub(Underlying("MSFT", 0), Underlying("AAPL", 0)), One USD)); 333.61 - 180.42 |]
         [| Give(Or(t1, t2)); -evalc cur I testE t1 |]
         [| Give(Give(One DKK)); 0.15 |] // Logic principle 2, Give(Give(c)) = c
         ]
@@ -117,7 +118,7 @@ module contractTests =
         [|o3|]
         [|Or(o2, o3)|]
         [|Or(o1, Or(o2, o3))|]
-        [| Acquire(10, Or(o1, o2))|]
+        [|Acquire(10, Or(o1, o2))|]
         ]
     [<Theory>]
     [<MemberData(nameof(simulateContractTest_NonStochastic))>]
