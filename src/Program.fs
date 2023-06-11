@@ -7,7 +7,7 @@ open Instruments
 open Management
 open FSharp.Stats
 
-
+// A function used to replicate the results of the report
 let rec replicateResults(z : string) =
     let set_seed (seed : int) = Random.SetSampleGenerator(Random.RandThreadSafe(seed))
     match z with

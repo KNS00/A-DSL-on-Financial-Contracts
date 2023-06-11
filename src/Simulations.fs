@@ -8,6 +8,7 @@ open FSharp.Stats.Distributions
 
 let normal = ContinuousDistribution.normal 0.0 1.0
 
+// A function used for currency valuation with dummy values for currencies
 let f (cur : Currency) : float =
     match cur with
     | USD -> 1.0
@@ -37,6 +38,14 @@ let WienerProcess(T : int) (dt : float) : float list =
     let results = List.scan (+) 0.0 sampleValues 
     results
 
+/// <summary>
+/// Simulates a Geometric Brownian Motion at time T.
+/// </summary>
+/// <param name="initialPrice">The current price of the stock.</param>
+/// <param name="T">The time T at which to calculate the stock price.</param>
+/// <param name="mu">The drift parameter for the simulation.</param>
+/// <param name="sigma">The volatility parameter for the simulation.</param>
+/// <returns>A float representing the GBMs stock price at time T.</returns>
 
 let GBM (initialPrice : float) (T : int) (mu : float) (sigma : float) : float =
     let Td = float T/365.
@@ -48,12 +57,11 @@ let GBM (initialPrice : float) (T : int) (mu : float) (sigma : float) : float =
 /// <summary>
 /// Simulates a Geometric Brownian Motion from start time to end time.
 /// </summary>
-/// <param name="currentPrice">The current price of the stock.</param>
+/// <param name="initialPrice">The current price of the stock.</param>
 /// <param name="T">The end time of the simulation.</param>
 /// <param name="dt">The time step for the simulation.</param>
 /// <param name="mu">The drift parameter for the simulation.</param>
 /// <param name="sigma">The volatility parameter for the simulation.</param>
-/// <param name="wpValues">A list of floats that represent a simulated Wiener Process.</param>
 /// <returns>A list of floats that represent the Geometric Brownian Motion.</returns>
 let GBMPath (initialPrice: float) (T: int) (dt: float) (mu: float) (sigma: float) : float list =
     let numSteps = int (float T / dt)
@@ -84,8 +92,6 @@ let simStock (stock : string) (t : int) : float =
 /// A single simulation of the given list of stocks for a given time period.
 /// </summary>
 /// <param name="stocks">A list of stocks to simulate.</param>
-/// <param name="t">The number of days from the simulation start date to the simulation end date.</param>
-/// <param name="dt">The size of the time steps for the simulation.</param>
 /// <returns>A list of simulated stock prices for each stock in the list.</returns>
 let makeE (stocks : (string * int) list) : Map<(string * int), float> =
     let keyValuePairs =
@@ -98,9 +104,9 @@ let makeE (stocks : (string * int) list) : Map<(string * int), float> =
 /// Runs a Monte Carlo simulation to estimate the expected value of a given contract.
 /// Uses the given options underlying stocks to generate stock price before simulation.
 /// </summary>
-/// <param name="c1">The contract to simulate.</param>
-/// <returns>The expected value of the option.</returns>
-
+/// <param name="sims">The amount of simulations.</param>
+/// <param name="c">The contract to simulate.</param>
+/// <returns>The expected value of the contract.</returns>
 let simulateContract (sims : int) (c : Contract) : float =
     let underlyings : (string * int) list = underlyings c
     let evaluations : float list =

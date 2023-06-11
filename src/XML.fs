@@ -24,7 +24,7 @@ let xn = XName.Get
 /// Retrieves the current price of a given stock symbol.
 /// </summary>
 /// <param name="symbol">The symbol of the stock to retrieve the price for.</param>
-/// <returns>A Result object containing the stock name and current price if successful, otherwise an error message.</returns>
+/// <returns>A Result object containing the stock name and current price if successful, otherwise bot.</returns>
 let getCurrentStockPrice (symbol: string) : Result<float, string> =
     let stockData = XDocument.Load(XMLfilePath)
     match stockData.Descendants(XName.Get("stock")).SingleOrDefault(fun s -> s.Element(XName.Get("Name")).Value = symbol) with
@@ -55,6 +55,8 @@ let getStockParameters (stockName: string) : (float * float * float) option =
     | _ -> None
 
 
+(* The rest of the functions in this file are not used in the thesis *)
+
 /// <summary>
 /// Returns the price of a given stock at a given time (if available).
 /// </summary>
@@ -72,7 +74,6 @@ let getPrice (stockName: string) (time: int) : float =
         | price -> float(price.Value)
 
 
-(* The rest of the functions in this file are not used in the thesis *)
 
 
 /// <summary>parses stock data from an XML document and creates a list of stock objects.</summary>

@@ -5,6 +5,10 @@ open FSharp.Stats.Distributions
 open XPlot.Plotly
 
 
+(* This file is for replicating the plots in the report *)
+
+
+
 // We have to define the GBM, GBMPath and discount function to take as input a float because then we can plot it elegantly.
 // We still keep the original definition in Simulation.fs since we are working with days in the DSL.
 let GBMPlot(initialPrice : float) (T : float) (mu : float) (sigma : float) : float =
@@ -134,7 +138,7 @@ let plotAsian() =
     let chart = Chart.Plot(traces, layout)
     chart |> Chart.Show
 
-// plotting a European Call Option
+// plotting a European Call Option. This plot is not in the report.
 let plotEuropeanCall() =
     let endTime = 10.
     let dt = 0.01
