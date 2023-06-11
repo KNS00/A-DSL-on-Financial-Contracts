@@ -76,7 +76,7 @@ let europeanCall2 (T : int) (stock : string) (strike : float )  (ccy : Currency)
 let europeanPut (T : int) (stock : string) (strike : float )  (ccy : Currency) : Contract =
     let c : Contract = Or(
                         Scale(Value 0.0, One ccy),
-                        Scale(Sub(Value strike, Underlying(stock, 0)), One USD))
+                        Scale(Sub(Value strike, Underlying(stock, 0)), One ccy))
     Acquire(T, c)
 
 /// <summary>
