@@ -4,7 +4,7 @@ This project is a part of my bachelor thesis at the bachelor programmee in Compu
 
 In this thesis, we construct a DSL deeply embedded in F\# which employs a set of constructors grounded with logical principles, enabling the user to express a wide range of financial contracts. We supply with functions that allow to manage financial contracts expressed within the language, and employ methods from continuous time finance for pricing.    
 
-There are two projects in this folder. The main project and solution, BachelorThesis, contains implementation. The Tests folder contains tests of the implementation.
+There are two projects in this folder. The main project and solution, BachelorThesis, which can be found in the src folder, contains implementation. The Tests folder contains tests of the implementation.
 
 ## Running the results of the report
 To run the results of the report, go into the root folder in the command prompt and run the command
