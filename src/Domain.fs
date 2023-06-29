@@ -9,7 +9,7 @@ type Currency = USD | EUR | GBP | DKK
 /// Represents an observable value: a value that is agreed upon by parties.
 /// </summary>
 type Obs = 
-  | Value of double // how many
+  | Value of double 
   | Underlying of string * int // get stock price at specific time relative to today
   | Mul of Obs * Obs
   | Add of Obs * Obs

@@ -26,7 +26,7 @@ let zcb (T : int) (face : float) (ccy : Currency) : Contract =
 let cb (T : int) (face : float) (rate : float) (yearlyFreq : float) (ccy : Currency) : Contract =
     let dates = int(yearlyFreq * 365.)
     let rateDates = [dates .. dates .. T] |> List.ofSeq
-    let couponFlows : Contract List = List.map (fun x -> flow x (face * rate / yearlyFreq) ccy) rateDates
+    let couponFlows : Contract List = List.map (fun x -> flow x (face * rate) ccy) rateDates
     let faceFlow = zcb T face ccy
     All(faceFlow :: couponFlows)
 

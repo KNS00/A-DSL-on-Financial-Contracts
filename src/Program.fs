@@ -57,6 +57,22 @@ let rec replicateResults(z : string) =
 let main (argv : string[]) =
     if Array.isEmpty argv then
         replicateResults ""
+        let E(s,t) : float =
+            match (s,t) with
+            | ("AAPL", 0) -> 100.0
+            | _-> failwith "price not found"
+
+        let f (cur : Currency) : float =
+            match cur with
+            | USD -> 1.0
+            | EUR -> 1.10
+            | GBP -> 1.24
+            | DKK -> 0.15
+        let c = chooserOption 1 10 "AAPL" 120.0 USD
+        let c1 = advance E 1 c
+        printfn "%A" c1
+        printfn "%A" (choose (simulateContract 100_000) c1)
+
     else
         Array.map (fun x -> replicateResults x) argv |> ignore
     0

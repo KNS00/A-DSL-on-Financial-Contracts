@@ -152,7 +152,7 @@ let advance (E : (string * int) -> float) (d : int) (c : Contract)  : Contract =
         | One _ -> c
         | Scale(o,c) -> Scale(o, adv d c)
         | All(cs) -> All(List.map (fun x -> adv d x) cs)
-        | Acquire(t, c) -> Acquire(t-d, adv d c)
+        | Acquire(t, c) -> Acquire(t-d, c)
         | Give(c) -> Give(adv d c)
         | Or(c1, c2) -> Or(adv d c1, adv d c2)
     simplify E (adv d c)
