@@ -2,7 +2,13 @@
 
 This project is a part of my bachelor thesis at the bachelor programmee in Computer Science & Economics at University of Copenhagen.
 
-In this thesis, we construct a DSL deeply embedded in F\# which employs a set of constructors grounded with logical principles, enabling the user to express a wide range of financial contracts. We supply with functions that allow to manage financial contracts expressed within the language, and employ methods from continuous time finance for pricing.    
+In the past decades, the financial derivatives market has experienced a rapid change,
+resulting in a necessity to not only manage and valuate existing derivatives, but also to minimise time to market for new, exotic derivatives. In this thesis, we establish a framework
+capable of expressing, managing and pricing a wide range of financial instruments. We do
+this by constructing a DSL deeply embedded in F # which employs a set of constructors
+grounded with logical principles, enabling the user to express a wide variety of financial
+contracts. We supply with functions that allow for management of contracts expressed
+within the language, and employ methods from continuous time finance for pricing.
 
 In the file 'presentation.pdf', you can find a brief explanation on what this project is about.
 
