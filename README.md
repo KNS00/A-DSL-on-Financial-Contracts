@@ -1,6 +1,6 @@
 # A Domain Specific Language on Financial Contracts
 
-This project is a part of my bachelor thesis at the bachelor programmee in Computer Science & Economics at University of Copenhagen.
+This project is a part of my bachelor thesis at the bachelor programmee in Computer Science & Economics at University of Copenhagen. Grade received was 12 (A).
 
 In the past decades, the financial derivatives market has experienced a rapid change,
 resulting in a necessity to not only manage and valuate existing derivatives, but also to minimise time to market for new, exotic derivatives. In this thesis, we establish a framework
