@@ -2,7 +2,7 @@
 This project is a part of my bachelor thesis at the Department of Computer Science at University of Copenhagen. Grade received was 12.
 
 ## Quick Overview
-The purpose was to implement a domain-specific language in F# that enables the user to:
+I implemented a domain-specific language in F# that enables the user to:
 * create complex financial contracts in a readable, declarative way using custom data types
 * manage the contracts by functions that operate on those data types
 * price the contracts using continuous-time finance principles.
